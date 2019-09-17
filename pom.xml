@@ -9,6 +9,7 @@
     <version>1.0.0</version>
     <modules>
         <module>paypay-spring-boot-starter-alipay</module>
+        <module>paypay-spring-boot-starter-wechatpay</module>
     </modules>
     <packaging>pom</packaging>
 
