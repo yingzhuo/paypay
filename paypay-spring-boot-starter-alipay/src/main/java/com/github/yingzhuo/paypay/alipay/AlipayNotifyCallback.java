@@ -23,25 +23,21 @@ import java.io.IOException;
 public interface AlipayNotifyCallback {
 
     public default void onInvalidSign(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("failure");
         response.getWriter().flush();
     }
 
     public default void onAlipayApiException(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams, AlipayApiException ex) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("failure");
         response.getWriter().flush();
     }
 
     public default void onTradeSuccess(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("success");
         response.getWriter().flush();
     }
 
     public default void onTradeFailure(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write("failure");
         response.getWriter().flush();
     }

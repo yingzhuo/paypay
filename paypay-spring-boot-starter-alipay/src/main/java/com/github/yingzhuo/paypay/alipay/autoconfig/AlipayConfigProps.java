@@ -44,7 +44,7 @@ public class AlipayConfigProps implements Serializable, InitializingBean, Resour
     private String publicKey;
     private String publicKeyLocation;
     private String callbackNotifyUrl;
-    private String callbackNotifyPath;
+    private String callbackNotifyPath = "/paypay/alipay-notify";
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -78,7 +78,7 @@ public class AlipayConfigProps implements Serializable, InitializingBean, Resour
         Assert.hasText(_privateKey, "Config error! 'paypay.alipay.private-key' and 'paypay.alipay.private-key-location' both blank.");
 
         _publicKey = this.publicKey;
-        if (StringUtils.isNotBlank(_publicKey)) {
+        if (StringUtils.isNotBlank(publicKeyLocation)) {
             _publicKey = loadResourceAsString(publicKeyLocation);
         }
         Assert.hasText(_publicKey, "Config error! 'paypay.alipay.public-key' and 'paypay.alipay.public-key-location' both blank.");

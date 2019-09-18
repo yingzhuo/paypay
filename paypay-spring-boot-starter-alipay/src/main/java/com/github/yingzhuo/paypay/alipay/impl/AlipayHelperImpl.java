@@ -52,7 +52,7 @@ public class AlipayHelperImpl implements AlipayHelper {
     }
 
     @Override
-    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire) {
+    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
 
         amountInCent = transformer.transform(amountInCent);
 
@@ -70,12 +70,7 @@ public class AlipayHelperImpl implements AlipayHelper {
         model.setPassbackParams(passbackParams);
         model.setSubject(subject);
         model.setOutTradeNo(tradeId);
-
-        if (timeExpire != null) {
-            model.setTimeExpire(timeExpire);
-        } else {
-            model.setTimeoutExpress("2h");
-        }
+        model.setTimeoutExpress(timeoutExpress);
 
         final String amount = parseAmount(amountInCent);
         model.setTotalAmount(amount);
@@ -106,8 +101,6 @@ public class AlipayHelperImpl implements AlipayHelper {
             return false;
         }
 
-        boolean ok = false;
-
         val request = new AlipayTradeQueryRequest();
 
         val alipayClient = new DefaultAlipayClient(
@@ -135,15 +128,11 @@ public class AlipayHelperImpl implements AlipayHelper {
             // TRADE_CLOSED (未付款交易超时关闭，或支付完成后全额退款)
             // TRADE_SUCCESS (交易支付成功)
             // TRADE_FINISHED (交易结束，不可退款)
-            if (StringUtils.equalsIgnoreCase("TRADE_SUCCESS", response.getTradeStatus())) {
-                ok = true;
-            }
+            return StringUtils.equalsIgnoreCase("TRADE_SUCCESS", response.getTradeStatus());
 
         } catch (AlipayApiException e) {
             throw new AlipayException(e);
         }
-
-        return ok;
     }
 
     private String parseAmount(long amountInCent) {

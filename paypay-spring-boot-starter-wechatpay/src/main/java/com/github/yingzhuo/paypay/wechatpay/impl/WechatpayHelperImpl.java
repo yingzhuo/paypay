@@ -40,7 +40,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
     }
 
     @Override
-    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String passbackParams, String subject, String timeExpire, String ip) {
+    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire, String ip) {
 
         amountInCent = transformer.transform(amountInCent);
 

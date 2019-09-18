@@ -32,7 +32,7 @@ public class WechatpayConfigProps implements Serializable, InitializingBean {
     private String mchId;
     private String secretKey;
     private String callbackNotifyUrl;
-    private String callbackNotifyPath;
+    private String callbackNotifyPath = "/paypay/wechatpay-notify";
 
     @Override
     public void afterPropertiesSet() {
