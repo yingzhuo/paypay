@@ -8,13 +8,13 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay;
+package com.github.yingzhuo.paypay.wechatpay;
 
 /**
  * @author 应卓
  */
 @FunctionalInterface
-public interface AlipayAmountTransformer {
+public interface WechatpayAmountTransformer {
 
     public long transform(long amountInCent);
 

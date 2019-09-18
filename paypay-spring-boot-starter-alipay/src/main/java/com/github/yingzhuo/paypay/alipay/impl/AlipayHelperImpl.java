@@ -43,18 +43,18 @@ public class AlipayHelperImpl implements AlipayHelper {
     private final static String PRODUCT_CODE = "QUICK_MSECURITY_PAY";
 
     private final AlipayConfigProps props;
-    private final AlipayAmountTransformer amountTransformer;
+    private final AlipayAmountTransformer transformer;
     private final DecimalFormat df = new DecimalFormat("######0.00");
 
-    public AlipayHelperImpl(AlipayConfigProps props, AlipayAmountTransformer alipayAmountTransformer) {
+    public AlipayHelperImpl(AlipayConfigProps props, AlipayAmountTransformer transformer) {
         this.props = props;
-        this.amountTransformer = alipayAmountTransformer != null ? alipayAmountTransformer : (a) -> a;
+        this.transformer = transformer;
     }
 
     @Override
     public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire) {
 
-        amountInCent = amountTransformer.transform(amountInCent);
+        amountInCent = transformer.transform(amountInCent);
 
         AlipayClient alipayClient = new DefaultAlipayClient(
                 URL,

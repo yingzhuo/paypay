@@ -27,12 +27,12 @@ import org.springframework.context.annotation.Bean;
 public class AlipayHelperAutoConfig {
 
     @Autowired(required = false)
-    private AlipayAmountTransformer amountTransformer;
+    private AlipayAmountTransformer transformer;
 
     @Bean
     @ConditionalOnMissingBean
     public AlipayHelper alipayHelper(AlipayConfigProps props) {
-        return new AlipayHelperImpl(props, amountTransformer);
+        return new AlipayHelperImpl(props, transformer != null ? transformer : (a) -> a);
     }
 
 }

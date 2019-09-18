@@ -8,9 +8,9 @@
 
  https://github.com/yingzhuo/paypay
 */
-
 package com.github.yingzhuo.paypay.wechatpay.impl;
 
+import com.github.yingzhuo.paypay.wechatpay.WechatpayAmountTransformer;
 import com.github.yingzhuo.paypay.wechatpay.WechatpayHelper;
 import com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayConfigProps;
 import com.github.yingzhuo.paypay.wechatpay.exception.WechatPayPrepaymentParamsCreationException;
@@ -31,13 +31,17 @@ import java.util.*;
 public class WechatpayHelperImpl implements WechatpayHelper {
 
     private final WechatpayConfigProps props;
+    private final WechatpayAmountTransformer transformer;
 
-    public WechatpayHelperImpl(WechatpayConfigProps props) {
+    public WechatpayHelperImpl(WechatpayConfigProps props, WechatpayAmountTransformer transformer) {
         this.props = props;
+        this.transformer = transformer;
     }
 
     @Override
     public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String passbackParams, String subject, String timeExpire, String ip) {
+
+        amountInCent = transformer.transform(amountInCent);
 
         PrepaymentParams prepaymentParams = new PrepaymentParams();
         Map<String, String> params = new HashMap<>();

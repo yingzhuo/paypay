@@ -1,3 +1,13 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
 package com.github.yingzhuo.paypay.alipay.autoconfig;
 
 import com.github.yingzhuo.paypay.alipay.AlipayNotifyCallback;
@@ -10,6 +20,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 
+/**
+ * @author 应卓
+ */
 @ConditionalOnWebApplication
 @ConditionalOnProperty(prefix = "paypay.alipay", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AlipayNotifyAutoConfig {

@@ -10,8 +10,10 @@
 */
 package com.github.yingzhuo.paypay.wechatpay.autoconfig;
 
+import com.github.yingzhuo.paypay.wechatpay.WechatpayAmountTransformer;
 import com.github.yingzhuo.paypay.wechatpay.WechatpayHelper;
 import com.github.yingzhuo.paypay.wechatpay.impl.WechatpayHelperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -21,9 +23,12 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties(WechatpayConfigProps.class)
 public class WechatpayHelperAutoConfig {
 
+    @Autowired(required = false)
+    private WechatpayAmountTransformer transformer;
+
     @Bean
     private WechatpayHelper wechatpayHelper(WechatpayConfigProps props) {
-        return new WechatpayHelperImpl(props);
+        return new WechatpayHelperImpl(props, transformer != null ? transformer : (a) -> a);
     }
 
 }
