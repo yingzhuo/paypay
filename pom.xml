@@ -27,6 +27,13 @@
         </license>
     </licenses>
 
+    <scm>
+        <tag>master</tag>
+        <url>git@github.com:yingzhuo/paypay.git</url>
+        <connection>scm:git:git@github.com:yingzhuo/paypay.git</connection>
+        <developerConnection>scm:git:git@github.com:yingzhuo/paypay.git</developerConnection>
+    </scm>
+
     <developers>
         <developer>
             <name>应卓</name>
