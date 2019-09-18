@@ -28,12 +28,17 @@ import org.springframework.core.Ordered;
 public class AlipayNotifyAutoConfig {
 
     @Autowired(required = false)
-    private AlipayNotifyCallback alipayNotifyCallback;
+    private AlipayNotifyCallback callback;
 
     @Bean
-    public FilterRegistrationBean<NotifyFilter> notifyFilterFilterRegistrationBean(AlipayConfigProps props) {
-        val reg = new FilterRegistrationBean<NotifyFilter>(new NotifyFilter(props, alipayNotifyCallback != null ? alipayNotifyCallback : new AlipayNotifyCallback() {
-        }));
+    public FilterRegistrationBean<NotifyFilter> alipayNotifyFilterFilterRegistrationBean(AlipayConfigProps props) {
+        if (callback == null) {
+            callback = new AlipayNotifyCallback() {
+            };
+        }
+
+        val reg = new FilterRegistrationBean<NotifyFilter>();
+        reg.setFilter(new NotifyFilter(props, callback));
         reg.setName(NotifyFilter.class.getName());
         reg.setOrder(Ordered.LOWEST_PRECEDENCE);
         reg.addUrlPatterns(props.getCallbackNotifyPath());

@@ -13,12 +13,12 @@ package com.github.yingzhuo.paypay.wechatpay.exception;
 /**
  * @author 应卓
  */
-public class WechatPayPrepaymentParamsCreationException extends RuntimeException {
+public class WechatpayPrepaymentParamsCreationException extends RuntimeException {
 
     private String code;
     private String subMessage;
 
-    public WechatPayPrepaymentParamsCreationException(String code, String subMessage) {
+    public WechatpayPrepaymentParamsCreationException(String code, String subMessage) {
         super(code);
         this.code = code;
         this.subMessage = subMessage;
@@ -31,5 +31,4 @@ public class WechatPayPrepaymentParamsCreationException extends RuntimeException
     public String getSubMessage() {
         return subMessage;
     }
-
 }

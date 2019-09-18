@@ -13,16 +13,17 @@ package com.github.yingzhuo.paypay.wechatpay.impl;
 import com.github.yingzhuo.paypay.wechatpay.WechatpayAmountTransformer;
 import com.github.yingzhuo.paypay.wechatpay.WechatpayHelper;
 import com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayConfigProps;
-import com.github.yingzhuo.paypay.wechatpay.exception.WechatPayPrepaymentParamsCreationException;
 import com.github.yingzhuo.paypay.wechatpay.exception.WechatpayException;
+import com.github.yingzhuo.paypay.wechatpay.exception.WechatpayPrepaymentParamsCreationException;
 import com.github.yingzhuo.paypay.wechatpay.model.PrepaymentParams;
 import com.github.yingzhuo.paypay.wechatpay.util.DocumentUtils;
 import com.github.yingzhuo.paypay.wechatpay.util.HttpUtils;
-import org.apache.commons.codec.digest.DigestUtils;
+import com.github.yingzhuo.paypay.wechatpay.util.SignUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 白宝鹏
@@ -61,7 +62,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             params.put("time_expire", timeExpire);  //prepay_id只有两小时的有效期
         }
 
-        String sign = createSign(params, props.getSecretKey());
+        String sign = SignUtils.createSign(params, props.getSecretKey());
         params.put("sign", sign);
         String wxReqStr = DocumentUtils.mapToXml(params);
 
@@ -84,18 +85,18 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 hashMap.put("noncestr", prepaymentParams.getNonceStr());
                 hashMap.put("timestamp", Long.toString(prepaymentParams.getTimestamp()));
                 hashMap.put("package", prepaymentParams.getPackageValue());
-                String paySign = createSign(hashMap, props.getSecretKey());
+                String paySign = SignUtils.createSign(hashMap, props.getSecretKey());
 
                 prepaymentParams.setSign(paySign);
                 prepaymentParams.setTradeId(tradeId);
             } else {
                 String subMsg = resultObject.get("err_code_des");
                 String code = resultObject.get("err_code");
-                throw new WechatPayPrepaymentParamsCreationException(code, subMsg);
+                throw new WechatpayPrepaymentParamsCreationException(code, subMsg);
             }
         } else {
             String subMsg = resultObject.get("return_msg");
-            throw new WechatPayPrepaymentParamsCreationException(null, subMsg);
+            throw new WechatpayPrepaymentParamsCreationException(null, subMsg);
         }
 
         return prepaymentParams;
@@ -113,7 +114,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             params.put("mch_id", props.getMchId());
             params.put("nonce_str", RandomStringUtils.randomAlphanumeric(32));
             params.put("out_trade_no", tradeId);//微信的订单号，优先使用 transaction_id  二选一
-            String sign = createSign(params, props.getSecretKey());
+            String sign = SignUtils.createSign(params, props.getSecretKey());
             params.put("sign", sign);
             String wxReqStr = DocumentUtils.mapToXml(params);
 
@@ -130,33 +131,16 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 } else {
                     String code = resultObject.get("err_code");
                     String subMsg = resultObject.get("err_code_des");
-                    throw new WechatPayPrepaymentParamsCreationException(code, subMsg);
+                    throw new WechatpayPrepaymentParamsCreationException(code, subMsg);
                 }
             } else {
                 String subMsg = resultObject.get("return_msg");
-                throw new WechatPayPrepaymentParamsCreationException(null, subMsg);
+                throw new WechatpayPrepaymentParamsCreationException(null, subMsg);
             }
         } catch (Exception e) {
             throw new WechatpayException(e);
         }
     }
 
-    private String createSign(Map<String, String> params, String keyValue) {
-        Set<String> keysSet = params.keySet();
-        List<String> keyList = new ArrayList<>(keysSet);
-        keyList.sort(StringUtils::compareIgnoreCase);
-
-        StringBuilder buf = new StringBuilder();
-        for (String key : keyList) {
-            buf.append("&").append(key).append("=");
-            String value = params.get(key);
-            buf.append(value);
-        }
-
-        buf.append("&").append("key").append("=");
-        buf.append(keyValue);
-        String sign = DigestUtils.md5Hex(buf.substring(1));
-        return sign.toUpperCase();
-    }
 
 }
