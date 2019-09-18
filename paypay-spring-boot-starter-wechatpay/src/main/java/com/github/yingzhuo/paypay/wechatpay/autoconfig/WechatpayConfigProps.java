@@ -1,3 +1,13 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
 package com.github.yingzhuo.paypay.wechatpay.autoconfig;
 
 import lombok.Getter;
@@ -8,6 +18,10 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 
+/**
+ * @author 白宝鹏
+ * @author 应卓
+ */
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "paypay.wechatpay")
@@ -21,7 +35,7 @@ public class WechatpayConfigProps implements Serializable, InitializingBean {
     private String callbackNotifyPath;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (!enabled) {
             return;
         }

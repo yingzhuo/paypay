@@ -23,6 +23,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class NotifyParams implements Serializable {
 

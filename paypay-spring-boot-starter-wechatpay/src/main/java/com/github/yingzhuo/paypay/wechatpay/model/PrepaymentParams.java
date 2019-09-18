@@ -1,7 +1,18 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
 package com.github.yingzhuo.paypay.wechatpay.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author 应卓
@@ -9,6 +20,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class PrepaymentParams {
 
     /**

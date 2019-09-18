@@ -1,9 +1,19 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
 package com.github.yingzhuo.paypay.wechatpay.util;
 
 /**
  * 常量
  */
-public class WXPayConstants {
+public final class WXPayConstants {
 
     public enum SignType {
         MD5, HMACSHA256

@@ -1,14 +1,26 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
+
 package com.github.yingzhuo.paypay.wechatpay.impl;
 
 import com.github.yingzhuo.paypay.wechatpay.WechatpayHelper;
 import com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayConfigProps;
+import com.github.yingzhuo.paypay.wechatpay.exception.WechatPayPrepaymentParamsCreationException;
+import com.github.yingzhuo.paypay.wechatpay.exception.WechatpayException;
 import com.github.yingzhuo.paypay.wechatpay.model.PrepaymentParams;
+import com.github.yingzhuo.paypay.wechatpay.util.DocumentUtils;
 import com.github.yingzhuo.paypay.wechatpay.util.HttpUtils;
-import com.github.yingzhuo.paypay.wechatpay.util.WXPayUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -18,9 +30,6 @@ import java.util.*;
  */
 public class WechatpayHelperImpl implements WechatpayHelper {
 
-
-    private static final String URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
     private final WechatpayConfigProps props;
 
     public WechatpayHelperImpl(WechatpayConfigProps props) {
@@ -28,38 +37,32 @@ public class WechatpayHelperImpl implements WechatpayHelper {
     }
 
     @Override
-    public PrepaymentParams createPrepaymentParams(String tradeId, long paymentCent, String passbackParams, String subject, String timeExpire, String ip) {
+    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String passbackParams, String subject, String timeExpire, String ip) {
 
         PrepaymentParams prepaymentParams = new PrepaymentParams();
-
-        String nonce_str = RandomStringUtils.randomAlphanumeric(32);
-        String sign_type = "MD5";
-        long total_fee = paymentCent;
-        String trade_type = "APP";
-
         Map<String, String> params = new HashMap<>();
         params.put("appid", props.getAppId());
         params.put("mch_id", props.getMchId());
-        params.put("nonce_str", nonce_str);
-        params.put("sign_type", sign_type);
+        params.put("nonce_str", RandomStringUtils.randomAlphanumeric(32));
+        params.put("sign_type", "MD5");
         params.put("body", subject);
         params.put("out_trade_no", tradeId);
-        params.put("total_fee", total_fee + "");
+        params.put("total_fee", Long.toString(amountInCent));
         params.put("spbill_create_ip", ip);
         params.put("notify_url", props.getCallbackNotifyUrl());
-        params.put("trade_type", trade_type);
+        params.put("trade_type", "APP");
         params.put("attach", passbackParams);
 
         if (timeExpire != null) {
-            params.put("time_expire", timeExpire);//prepay_id只有两小时的有效期
+            params.put("time_expire", timeExpire);  //prepay_id只有两小时的有效期
         }
 
         String sign = createSign(params, props.getSecretKey());
         params.put("sign", sign);
-        String wxReqStr = WXPayUtil.mapToXml(params);
+        String wxReqStr = DocumentUtils.mapToXml(params);
 
-        String resultInfo = HttpUtils.syncXmlPost(URL, wxReqStr);
-        Map<String, String> resultObject = WXPayUtil.xmlToMap(resultInfo);
+        String resultInfo = HttpUtils.postWithXmlBody("https://api.mch.weixin.qq.com/pay/unifiedorder", wxReqStr);
+        Map<String, String> resultObject = DocumentUtils.xmlToMap(resultInfo);
 
         if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("return_code"))) {
             if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("result_code"))) {
@@ -82,13 +85,56 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 prepaymentParams.setSign(paySign);
                 prepaymentParams.setTradeId(tradeId);
             } else {
-                Assert.isTrue(false, resultObject.get("err_code") + "-" + resultObject.get("err_code_des"));
+                String subMsg = resultObject.get("err_code_des");
+                String code = resultObject.get("err_code");
+                throw new WechatPayPrepaymentParamsCreationException(code, subMsg);
             }
         } else {
-            Assert.isTrue(false, resultObject.get("return_msg"));
+            String subMsg = resultObject.get("return_msg");
+            throw new WechatPayPrepaymentParamsCreationException(null, subMsg);
         }
 
-        return null;
+        return prepaymentParams;
+    }
+
+    @Override
+    public boolean isTradeSuccess(String tradeId) {
+        if (StringUtils.isBlank(tradeId)) {
+            return false;
+        }
+
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("appid", props.getAppId());
+            params.put("mch_id", props.getMchId());
+            params.put("nonce_str", RandomStringUtils.randomAlphanumeric(32));
+            params.put("out_trade_no", tradeId);//微信的订单号，优先使用 transaction_id  二选一
+            String sign = createSign(params, props.getSecretKey());
+            params.put("sign", sign);
+            String wxReqStr = DocumentUtils.mapToXml(params);
+
+            String resultInfo = HttpUtils.postWithXmlBody("https://api.mch.weixin.qq.com/pay/orderquery", wxReqStr);
+            Map<String, String> resultObject = DocumentUtils.xmlToMap(resultInfo);
+
+            if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("return_code"))) {
+
+                if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("result_code"))) {
+
+                    String trade_state = resultObject.get("trade_state");
+                    return StringUtils.equalsIgnoreCase("SUCCESS", trade_state);
+
+                } else {
+                    String code = resultObject.get("err_code");
+                    String subMsg = resultObject.get("err_code_des");
+                    throw new WechatPayPrepaymentParamsCreationException(code, subMsg);
+                }
+            } else {
+                String subMsg = resultObject.get("return_msg");
+                throw new WechatPayPrepaymentParamsCreationException(null, subMsg);
+            }
+        } catch (Exception e) {
+            throw new WechatpayException(e);
+        }
     }
 
     private String createSign(Map<String, String> params, String keyValue) {
@@ -105,7 +151,6 @@ public class WechatpayHelperImpl implements WechatpayHelper {
 
         buf.append("&").append("key").append("=");
         buf.append(keyValue);
-
         String sign = DigestUtils.md5Hex(buf.substring(1));
         return sign.toUpperCase();
     }
