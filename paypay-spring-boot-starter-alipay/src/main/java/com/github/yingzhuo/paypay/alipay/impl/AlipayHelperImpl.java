@@ -108,7 +108,7 @@ public class AlipayHelperImpl implements AlipayHelper {
                 props.getEffectivePrivateKey(),
                 PACKAGE_FORMAT,
                 CHARSET,
-                props.getPublicKey(),
+                props.getEffectivePublicKey(),
                 SIGN_TYPE);
 
         val model = new AlipayTradeAppPayModel();
