@@ -47,22 +47,6 @@ public class AlipayConfigProps implements Serializable, InitializingBean, Resour
     private String callbackNotifyUrl;
     private String callbackNotifyPath = "/paypay/alipay-notify";
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private String _publicKey;
-
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private String _privateKey;
-
-    public String getEffectivePublicKey() {
-        return this._publicKey;
-    }
-
-    public String getEffectivePrivateKey() {
-        return this._privateKey;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         if (!enabled) {
@@ -72,17 +56,15 @@ public class AlipayConfigProps implements Serializable, InitializingBean, Resour
         Assert.hasText(appId, "Config error! 'paypay.alipay.app-id' is blank.");
         Assert.hasText(callbackNotifyUrl, "Config error! 'paypay.alipay.callback-notify-url' is blank.");
 
-        _privateKey = this.privateKey;
         if (StringUtils.isNotBlank(privateKeyLocation)) {
-            _privateKey = loadResourceAsString(privateKeyLocation);
+            this.privateKey = loadResourceAsString(privateKeyLocation);
         }
-        Assert.hasText(_privateKey, "Config error! 'paypay.alipay.private-key' and 'paypay.alipay.private-key-location' both blank.");
+        Assert.hasText(privateKey, "Config error! 'paypay.alipay.private-key' and 'paypay.alipay.private-key-location' both blank.");
 
-        _publicKey = this.publicKey;
         if (StringUtils.isNotBlank(publicKeyLocation)) {
-            _publicKey = loadResourceAsString(publicKeyLocation);
+            this.publicKey = loadResourceAsString(publicKeyLocation);
         }
-        Assert.hasText(_publicKey, "Config error! 'paypay.alipay.public-key' and 'paypay.alipay.public-key-location' both blank.");
+        Assert.hasText(this.publicKey, "Config error! 'paypay.alipay.public-key' and 'paypay.alipay.public-key-location' both blank.");
     }
 
     private String loadResourceAsString(String location) throws IOException {

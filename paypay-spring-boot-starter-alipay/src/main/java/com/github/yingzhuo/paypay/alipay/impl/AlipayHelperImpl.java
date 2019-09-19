@@ -58,10 +58,10 @@ public class AlipayHelperImpl implements AlipayHelper {
         AlipayClient alipayClient = new DefaultAlipayClient(
                 URL,
                 props.getAppId(),
-                props.getEffectivePrivateKey(),
+                props.getPrivateKey(),
                 PACKAGE_FORMAT,
                 CHARSET,
-                props.getEffectivePublicKey(),
+                props.getPublicKey(),
                 SIGN_TYPE);
 
         val request = new AlipayTradeAppPayRequest();
@@ -105,10 +105,10 @@ public class AlipayHelperImpl implements AlipayHelper {
         val alipayClient = new DefaultAlipayClient(
                 URL,
                 props.getAppId(),
-                props.getEffectivePrivateKey(),
+                props.getPrivateKey(),
                 PACKAGE_FORMAT,
                 CHARSET,
-                props.getEffectivePublicKey(),
+                props.getPublicKey(),
                 SIGN_TYPE);
 
         val model = new AlipayTradeAppPayModel();

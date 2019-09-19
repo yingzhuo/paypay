@@ -57,7 +57,7 @@ public class NotifyFilter extends OncePerRequestFilter {
         try {
             boolean isValidSign = AlipaySignature.rsaCheckV1(
                     getValidationMap(request),
-                    props.getEffectivePublicKey(),
+                    props.getPublicKey(),
                     notifyParams.getCharset(),
                     notifyParams.getSignType());
 
