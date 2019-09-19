@@ -28,7 +28,7 @@ public class WechatpayHelperAutoConfig {
 
     @Bean
     private WechatpayHelper wechatpayHelper(WechatpayConfigProps props) {
-        return new WechatpayHelperImpl(props, transformer != null ? transformer : (a) -> a);
+        return new WechatpayHelperImpl(props, transformer != null ? transformer : WechatpayAmountTransformer.nopTransformer());
     }
 
 }

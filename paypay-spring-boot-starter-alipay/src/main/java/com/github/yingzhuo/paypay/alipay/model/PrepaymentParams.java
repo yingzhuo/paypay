@@ -10,9 +10,7 @@
 */
 package com.github.yingzhuo.paypay.alipay.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -22,6 +20,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PrepaymentParams implements Serializable {
 
     /**
@@ -32,6 +33,6 @@ public class PrepaymentParams implements Serializable {
     /**
      * 阿里支付参数
      */
-    private String aliParams = "";
+    private String aliParams;
 
 }

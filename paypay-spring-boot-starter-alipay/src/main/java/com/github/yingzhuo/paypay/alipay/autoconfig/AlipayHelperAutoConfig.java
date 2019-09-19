@@ -32,7 +32,7 @@ public class AlipayHelperAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     public AlipayHelper alipayHelper(AlipayConfigProps props) {
-        return new AlipayHelperImpl(props, transformer != null ? transformer : (a) -> a);
+        return new AlipayHelperImpl(props, transformer != null ? transformer : AlipayAmountTransformer.nopTransformer());
     }
 
 }

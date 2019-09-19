@@ -21,9 +21,8 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.github.yingzhuo.paypay.alipay.AlipayAmountTransformer;
 import com.github.yingzhuo.paypay.alipay.AlipayHelper;
 import com.github.yingzhuo.paypay.alipay.autoconfig.AlipayConfigProps;
-import com.github.yingzhuo.paypay.alipay.exception.AlipayException;
-import com.github.yingzhuo.paypay.alipay.exception.AlipayPrepaymentParamsCreationException;
-import com.github.yingzhuo.paypay.alipay.exception.AlipaySuccessCheckingException;
+import com.github.yingzhuo.paypay.alipay.exception.AlipayBusinessException;
+import com.github.yingzhuo.paypay.alipay.exception.AlipayClientException;
 import com.github.yingzhuo.paypay.alipay.model.PrepaymentParams;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -83,13 +82,13 @@ public class AlipayHelperImpl implements AlipayHelper {
         try {
             AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
             if (!response.isSuccess()) {
-                throw new AlipayPrepaymentParamsCreationException(response.getMsg(), response.getSubMsg());
+                throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());
             }
 
             params.setAliParams(response.getBody());
             params.setTradeId(tradeId);
         } catch (AlipayApiException e) {
-            throw new AlipayException(e);
+            throw new AlipayClientException(e);
         }
 
         return params;
@@ -121,7 +120,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             AlipayTradeQueryResponse response = alipayClient.execute(request);
 
             if (!response.isSuccess()) {
-                throw new AlipaySuccessCheckingException(response.getMsg(), response.getSubMsg());
+                throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());
             }
 
             // WAIT_BUYER_PAY (交易创建，等待买家付款)
@@ -131,7 +130,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             return StringUtils.equalsIgnoreCase("TRADE_SUCCESS", response.getTradeStatus());
 
         } catch (AlipayApiException e) {
-            throw new AlipayException(e);
+            throw new AlipayClientException(e);
         }
     }
 

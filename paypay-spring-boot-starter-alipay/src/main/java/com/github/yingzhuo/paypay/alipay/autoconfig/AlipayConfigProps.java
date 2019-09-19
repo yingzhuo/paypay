@@ -35,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 @ConfigurationProperties(prefix = "paypay.alipay")
 public class AlipayConfigProps implements Serializable, InitializingBean, ResourceLoaderAware {
 
+    @Getter(AccessLevel.NONE)
     private ResourceLoader resourceLoader;
 
     private boolean enabled = true;

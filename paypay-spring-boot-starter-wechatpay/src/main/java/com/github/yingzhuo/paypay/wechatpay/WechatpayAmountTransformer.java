@@ -16,6 +16,14 @@ package com.github.yingzhuo.paypay.wechatpay;
 @FunctionalInterface
 public interface WechatpayAmountTransformer {
 
+    public static WechatpayAmountTransformer alwaysOneCentTransformer() {
+        return n -> 1L;
+    }
+
+    public static WechatpayAmountTransformer nopTransformer() {
+        return n -> n;
+    }
+
     public long transform(long amountInCent);
 
 }

@@ -59,7 +59,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
         params.put("attach", passbackParams);
 
         if (timeExpire != null) {
-            params.put("time_expire", timeExpire);  //prepay_id只有两小时的有效期
+            params.put("time_expire", timeExpire);
         }
 
         String sign = SignUtils.createSign(params, props.getSecretKey());

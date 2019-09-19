@@ -31,7 +31,7 @@ public class WechatpayNotifyAutoConfig {
     private WechatpayNotifyCallback callback;
 
     @Bean
-    public FilterRegistrationBean<NotifyFilter> wechatPayNotifyFilterFilterRegistrationBean(WechatpayConfigProps props) {
+    public FilterRegistrationBean<NotifyFilter> wechatPayNotifyFilterRegistrationBean(WechatpayConfigProps props) {
 
         if (callback == null) {
             callback = new WechatpayNotifyCallback() {

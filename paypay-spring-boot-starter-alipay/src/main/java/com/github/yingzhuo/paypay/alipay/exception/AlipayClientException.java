@@ -15,9 +15,9 @@ import com.alipay.api.AlipayApiException;
 /**
  * @author 应卓
  */
-public class AlipayException extends RuntimeException {
+public class AlipayClientException extends RuntimeException {
 
-    public AlipayException(AlipayApiException cause) {
+    public AlipayClientException(AlipayApiException cause) {
         super(cause);
     }
 

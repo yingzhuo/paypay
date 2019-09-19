@@ -12,12 +12,13 @@ package com.github.yingzhuo.paypay.alipay.exception;
 
 /**
  * @author 应卓
+ * @since 1.0.1
  */
-public class AlipayPrepaymentParamsCreationException extends RuntimeException {
+public class AlipayBusinessException extends RuntimeException {
 
     private String subMessage;
 
-    public AlipayPrepaymentParamsCreationException(String message, String subMessage) {
+    public AlipayBusinessException(String message, String subMessage) {
         super(message);
         this.subMessage = subMessage;
     }

@@ -31,7 +31,7 @@ public class AlipayNotifyAutoConfig {
     private AlipayNotifyCallback callback;
 
     @Bean
-    public FilterRegistrationBean<NotifyFilter> alipayNotifyFilterFilterRegistrationBean(AlipayConfigProps props) {
+    public FilterRegistrationBean<NotifyFilter> alipayNotifyFilterRegistrationBean(AlipayConfigProps props) {
         if (callback == null) {
             callback = new AlipayNotifyCallback() {
             };
