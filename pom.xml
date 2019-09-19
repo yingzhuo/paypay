@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.yingzhuo</groupId>
     <artifactId>paypay</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <modules>
         <module>paypay-spring-boot-starter-alipay</module>
         <module>paypay-spring-boot-starter-wechatpay</module>

@@ -35,6 +35,7 @@ import java.util.Map;
  * @author 应卓
  */
 @Slf4j
+@SuppressWarnings("Duplicates")
 public class NotifyFilter extends OncePerRequestFilter {
 
     private final WechatpayConfigProps props;
@@ -50,11 +51,16 @@ public class NotifyFilter extends OncePerRequestFilter {
         doLog(request);
 
         final String requestXml = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        Map<String, String> requestObjMap = DocumentUtils.xmlToMap(requestXml);
 
+        if (StringUtils.isBlank(requestXml)) {
+            callback.onEmptyRequestBody(response);
+        }
+
+        Map<String, String> requestObjMap = DocumentUtils.xmlToMap(requestXml);
         log.trace("request body xml :\n{}", requestXml);
 
         try {
+
             if (StringUtils.equalsIgnoreCase("SUCCESS", requestObjMap.get("return_code"))) {
                 if (StringUtils.equalsIgnoreCase("SUCCESS", requestObjMap.get("result_code"))) {
                     Map<String, String> payparms = new HashMap<>();
@@ -99,7 +105,6 @@ public class NotifyFilter extends OncePerRequestFilter {
                     log.info("输出结果是: 支付结果通知 sign:{},signLocal:{}", requestObjMap.get("sign"), signLocal);
                     boolean isValidSign = StringUtils.equalsIgnoreCase(requestObjMap.get("sign"), signLocal);
 
-
                     if (isValidSign) {
                         callback.onTradeSuccess(request, response, requestObjMap);
                     } else {
@@ -117,31 +122,34 @@ public class NotifyFilter extends OncePerRequestFilter {
     }
 
     private void doLog(HttpServletRequest request) {
-        log.debug(StringUtils.repeat('-', 120));
+        try {
+            log.debug(StringUtils.repeat('-', 120));
 
-        log.debug("[Path]: ");
-        log.debug("\t\t\t{}", decode(request.getRequestURI()));
+            log.debug("[Path]: ");
+            log.debug("\t\t\t{}", decode(request.getRequestURI()));
 
-        log.debug("[Method]: ");
-        log.debug("\t\t\t{}", request.getMethod());
+            log.debug("[Method]: ");
+            log.debug("\t\t\t{}", request.getMethod());
 
-        log.debug("[Headers]: ");
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            String value = request.getHeader(name);
-            log.debug("\t\t\t{} = {}", name, name.equalsIgnoreCase("cookie") ? StringUtils.abbreviate(value, 60) : value);
+            log.debug("[Headers]: ");
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                String value = request.getHeader(name);
+                log.debug("\t\t\t{} = {}", name, name.equalsIgnoreCase("cookie") ? StringUtils.abbreviate(value, 60) : value);
+            }
+
+            log.debug("[Params]: ");
+            Enumeration<String> paramNames = request.getParameterNames();
+            while (paramNames.hasMoreElements()) {
+                String name = paramNames.nextElement();
+                String value = request.getParameter(name);
+                log.debug("\t\t\t{} = {}", name, value);
+            }
+
+            log.debug(StringUtils.repeat('-', 120));
+        } catch (Exception ignore) {
         }
-
-        log.debug("[Params]: ");
-        Enumeration<String> paramNames = request.getParameterNames();
-        while (paramNames.hasMoreElements()) {
-            String name = paramNames.nextElement();
-            String value = request.getParameter(name);
-            log.debug("\t\t\t{} = {}", name, value);
-        }
-
-        log.debug(StringUtils.repeat('-', 120));
     }
 
     private String decode(String path) {

@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +35,7 @@ import java.util.Map;
  * @author 应卓
  */
 @Slf4j
+@SuppressWarnings("Duplicates")
 public class NotifyFilter extends OncePerRequestFilter {
 
     private final AlipayConfigProps props;
@@ -86,35 +86,7 @@ public class NotifyFilter extends OncePerRequestFilter {
             String valueStr = StringUtils.join(values);
             validationMap.put(key, valueStr);
         }
-        return Collections.unmodifiableMap(validationMap);
-    }
-
-    private void doLog(HttpServletRequest request) {
-        log.debug(StringUtils.repeat('-', 120));
-
-        log.debug("[Path]: ");
-        log.debug("\t\t\t{}", decode(request.getRequestURI()));
-
-        log.debug("[Method]: ");
-        log.debug("\t\t\t{}", request.getMethod());
-
-        log.debug("[Headers]: ");
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            String value = request.getHeader(name);
-            log.debug("\t\t\t{} = {}", name, name.equalsIgnoreCase("cookie") ? StringUtils.abbreviate(value, 60) : value);
-        }
-
-        log.debug("[Params]: ");
-        Enumeration<String> paramNames = request.getParameterNames();
-        while (paramNames.hasMoreElements()) {
-            String name = paramNames.nextElement();
-            String value = request.getParameter(name);
-            log.debug("\t\t\t{} = {}", name, value);
-        }
-
-        log.debug(StringUtils.repeat('-', 120));
+        return validationMap;
     }
 
     private String decode(String path) {
@@ -124,4 +96,36 @@ public class NotifyFilter extends OncePerRequestFilter {
             throw new AssertionError();
         }
     }
+
+    private void doLog(HttpServletRequest request) {
+        try {
+            log.debug(StringUtils.repeat('-', 120));
+
+            log.debug("[Path]: ");
+            log.debug("\t\t\t{}", decode(request.getRequestURI()));
+
+            log.debug("[Method]: ");
+            log.debug("\t\t\t{}", request.getMethod());
+
+            log.debug("[Headers]: ");
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                String value = request.getHeader(name);
+                log.debug("\t\t\t{} = {}", name, name.equalsIgnoreCase("cookie") ? StringUtils.abbreviate(value, 60) : value);
+            }
+
+            log.debug("[Params]: ");
+            Enumeration<String> paramNames = request.getParameterNames();
+            while (paramNames.hasMoreElements()) {
+                String name = paramNames.nextElement();
+                String value = request.getParameter(name);
+                log.debug("\t\t\t{} = {}", name, value);
+            }
+
+            log.debug(StringUtils.repeat('-', 120));
+        } catch (Exception ignore) {
+        }
+    }
+
 }
