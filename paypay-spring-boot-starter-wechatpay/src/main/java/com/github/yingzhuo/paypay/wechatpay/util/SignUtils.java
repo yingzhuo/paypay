@@ -1,3 +1,13 @@
+/*
+ ____
+|  _ \ __ _ _   _ _ __   __ _ _   _
+| |_) / _` | | | | '_ \ / _` | | | |
+|  __/ (_| | |_| | |_) | (_| | |_| |
+|_|   \__,_|\__, | .__/ \__,_|\__, |
+            |___/|_|          |___/
+
+ https://github.com/yingzhuo/paypay
+*/
 package com.github.yingzhuo.paypay.wechatpay.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
