@@ -25,7 +25,7 @@ public interface WechatpayNotifyCallback {
     public static final String TRADE_ID_KEY = "out_trade_no";
 
     public default void onEmptyRequestBody(HttpServletResponse response) throws IOException {
-        String xml = XmlResponse.of("FAIL", "Invalid sign.");
+        String xml = XmlResponse.of("FAIL", "Empty Request Body");
         response.getWriter().write(xml);
         response.getWriter().flush();
     }
@@ -79,5 +79,4 @@ public interface WechatpayNotifyCallback {
             return sb.toString();
         }
     }
-
 }

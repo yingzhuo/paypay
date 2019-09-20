@@ -6,6 +6,7 @@ usage:
 	@echo " usage            | 显示本菜单"
 	@echo " clean            | 清理"
 	@echo " compile          | 编译"
+	@echo " install          | 安装"
 	@echo " package          | 打包"
 	@echo " deploy           | 部署到Maven中央仓库"
 	@echo " version          | 更改版本号"
@@ -21,6 +22,9 @@ compile:
 package:
 	@mvn -f $(CURDIR)/pom.xml clean package -Dmaven.test.skip=true
 
+install:
+	@mvn -f $(CURDIR)/pom.xml clean install -Dmaven.test.skip=true
+
 deploy:
 	@mvn -f $(CURDIR)/pom.xml clean deploy -Psonar -Dmaven.test.skip=true
 
@@ -34,4 +38,4 @@ push-code: clean
 	@git commit -m "$(timestamp)"
 	@git push
 
-.PHONY: usage clean compile package deploy push-code change-version
+.PHONY: usage clean compile package install deploy push-code change-version

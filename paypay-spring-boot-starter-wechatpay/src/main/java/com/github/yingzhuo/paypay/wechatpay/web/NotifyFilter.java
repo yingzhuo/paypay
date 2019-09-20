@@ -54,6 +54,7 @@ public class NotifyFilter extends OncePerRequestFilter {
 
         if (StringUtils.isBlank(requestXml)) {
             callback.onEmptyRequestBody(response);
+            return;
         }
 
         Map<String, String> requestObjMap = DocumentUtils.xmlToMap(requestXml);
