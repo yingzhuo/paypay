@@ -64,44 +64,44 @@ public class NotifyFilter extends OncePerRequestFilter {
 
             if (StringUtils.equalsIgnoreCase("SUCCESS", requestObjMap.get("return_code"))) {
                 if (StringUtils.equalsIgnoreCase("SUCCESS", requestObjMap.get("result_code"))) {
-                    Map<String, String> payparms = new HashMap<>();
-                    payparms.put("result_code", requestObjMap.get("result_code"));
-                    payparms.put("appid", requestObjMap.get("appid"));
-                    payparms.put("mch_id", requestObjMap.get("mch_id"));
+                    Map<String, String> map = new HashMap<>();
+                    map.put("result_code", requestObjMap.get("result_code"));
+                    map.put("appid", requestObjMap.get("appid"));
+                    map.put("mch_id", requestObjMap.get("mch_id"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("device_info")))
-                        payparms.put("device_info", requestObjMap.get("device_info"));
-                    payparms.put("nonce_str", requestObjMap.get("nonce_str"));
-                    payparms.put("return_code", requestObjMap.get("return_code"));
+                        map.put("device_info", requestObjMap.get("device_info"));
+                    map.put("nonce_str", requestObjMap.get("nonce_str"));
+                    map.put("return_code", requestObjMap.get("return_code"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("err_code")))
-                        payparms.put("err_code", requestObjMap.get("err_code"));
+                        map.put("err_code", requestObjMap.get("err_code"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("err_code_des")))
-                        payparms.put("err_code_des", requestObjMap.get("err_code_des"));
-                    payparms.put("openid", requestObjMap.get("openid"));
-                    payparms.put("is_subscribe", requestObjMap.get("is_subscribe"));
-                    payparms.put("trade_type", requestObjMap.get("trade_type"));
-                    payparms.put("bank_type", requestObjMap.get("bank_type"));
-                    payparms.put("total_fee", requestObjMap.get("total_fee"));
+                        map.put("err_code_des", requestObjMap.get("err_code_des"));
+                    map.put("openid", requestObjMap.get("openid"));
+                    map.put("is_subscribe", requestObjMap.get("is_subscribe"));
+                    map.put("trade_type", requestObjMap.get("trade_type"));
+                    map.put("bank_type", requestObjMap.get("bank_type"));
+                    map.put("total_fee", requestObjMap.get("total_fee"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("fee_type")))
-                        payparms.put("fee_type", requestObjMap.get("fee_type"));
-                    payparms.put("cash_fee", requestObjMap.get("cash_fee"));
+                        map.put("fee_type", requestObjMap.get("fee_type"));
+                    map.put("cash_fee", requestObjMap.get("cash_fee"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("cash_fee_type")))
-                        payparms.put("cash_fee_type", requestObjMap.get("cash_fee_type"));
+                        map.put("cash_fee_type", requestObjMap.get("cash_fee_type"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("coupon_fee")))
-                        payparms.put("coupon_fee", requestObjMap.get("coupon_fee"));
+                        map.put("coupon_fee", requestObjMap.get("coupon_fee"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("coupon_count")))
-                        payparms.put("coupon_count", requestObjMap.get("coupon_count"));
+                        map.put("coupon_count", requestObjMap.get("coupon_count"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("coupon_id_1")))
-                        payparms.put("coupon_id_1", requestObjMap.get("coupon_id_1"));
+                        map.put("coupon_id_1", requestObjMap.get("coupon_id_1"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("coupon_fee_1")))
-                        payparms.put("coupon_fee_1", requestObjMap.get("coupon_fee_1"));
-                    payparms.put("transaction_id", requestObjMap.get("transaction_id"));
-                    payparms.put("out_trade_no", requestObjMap.get("out_trade_no"));
+                        map.put("coupon_fee_1", requestObjMap.get("coupon_fee_1"));
+                    map.put("transaction_id", requestObjMap.get("transaction_id"));
+                    map.put("out_trade_no", requestObjMap.get("out_trade_no"));
                     if (StringUtils.isNoneBlank(requestObjMap.get("attach")))
-                        payparms.put("attach", requestObjMap.get("attach"));
-                    payparms.put("time_end", requestObjMap.get("time_end"));
-                    log.info("结果字典是:{} 封装字典是:{}", requestObjMap, payparms);
+                        map.put("attach", requestObjMap.get("attach"));
+                    map.put("time_end", requestObjMap.get("time_end"));
+                    log.info("结果字典是:{} 封装字典是:{}", requestObjMap, map);
 
-                    String signLocal = SignUtils.createSign(payparms, props.getSecretKey());
+                    String signLocal = SignUtils.createSign(map, props.getSecretKey());
 
                     log.info("输出结果是: 支付结果通知 sign:{},signLocal:{}", requestObjMap.get("sign"), signLocal);
                     boolean isValidSign = StringUtils.equalsIgnoreCase(requestObjMap.get("sign"), signLocal);
@@ -111,12 +111,15 @@ public class NotifyFilter extends OncePerRequestFilter {
                     } else {
                         callback.onInvalidSign(request, response, requestObjMap);
                     }
+
                 } else {
                     callback.onTradeFailure(request, response, requestObjMap);
                 }
+
             } else {
                 callback.onTradeFailure(request, response, requestObjMap);
             }
+
         } catch (Exception e) {
             callback.onException(request, response, requestObjMap, e);
         }

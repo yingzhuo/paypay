@@ -10,7 +10,7 @@
 */
 package com.github.yingzhuo.paypay.wechatpay;
 
-import lombok.val;
+import com.github.yingzhuo.paypay.wechatpay.util.XmlResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +26,7 @@ public interface WechatpayNotifyCallback {
 
     public default void onEmptyRequestBody(HttpServletResponse response) throws IOException {
         String xml = XmlResponse.of("FAIL", "Empty Request Body");
+        response.setStatus(500);
         response.getWriter().write(xml);
         response.getWriter().flush();
     }
@@ -54,29 +55,4 @@ public interface WechatpayNotifyCallback {
         response.getWriter().flush();
     }
 
-    /**
-     * 微信格式化输出
-     */
-    public static class XmlResponse {
-
-        public static String of(String returnCode, String returnMsg) {
-            val xml = new XmlResponse();
-            xml.returnCode = returnCode;
-            xml.returnMsg = returnMsg;
-            return xml.toXmlString();
-        }
-
-        private String returnCode = "SUCCESS";
-        private String returnMsg = "OK";
-
-        private String toXmlString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<xml><return_code><![CDATA[")
-                    .append(returnCode)
-                    .append("]]></return_code><return_msg><![CDATA[")
-                    .append(returnMsg)
-                    .append("]]></return_msg></xml>");
-            return sb.toString();
-        }
-    }
 }
