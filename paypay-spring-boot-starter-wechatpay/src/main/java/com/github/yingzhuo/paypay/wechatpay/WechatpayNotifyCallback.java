@@ -25,34 +25,26 @@ public interface WechatpayNotifyCallback {
     public static final String TRADE_ID_KEY = "out_trade_no";
 
     public default void onEmptyRequestBody(HttpServletResponse response) throws IOException {
-        String xml = XmlResponse.of("FAIL", "Empty Request Body");
-        response.setStatus(500);
-        response.getWriter().write(xml);
-        response.getWriter().flush();
+        XmlResponse.write(response, "SUCCESS", "OK");
     }
 
     public default void onInvalidSign(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
-        String xml = XmlResponse.of("FAIL", "Invalid sign.");
-        response.getWriter().write(xml);
-        response.getWriter().flush();
+        XmlResponse.write(response, "SUCCESS", "OK");
     }
 
     public default void onTradeSuccess(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
-        String xml = XmlResponse.of("SUCCESS", "SUCCESS");
-        response.getWriter().write(xml);
-        response.getWriter().flush();
+        XmlResponse.write(response, "SUCCESS", "OK");
     }
 
     public default void onTradeFailure(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
-        String xml = XmlResponse.of("FAIL", "FAIL");
-        response.getWriter().write(xml);
-        response.getWriter().flush();
+        XmlResponse.write(response, "SUCCESS", "OK");
     }
 
-    public default void onException(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap, Exception ex) throws IOException {
-        String xml = XmlResponse.of("FAIL", "Exception");
-        response.getWriter().write(xml);
-        response.getWriter().flush();
+    public default void onException(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap, Exception ex) {
+        try {
+            XmlResponse.write(response, "SUCCESS", "OK");
+        } catch (IOException ignored) {
+        }
     }
 
 }
