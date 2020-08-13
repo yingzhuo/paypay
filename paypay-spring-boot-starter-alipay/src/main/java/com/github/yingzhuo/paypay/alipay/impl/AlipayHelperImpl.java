@@ -18,14 +18,13 @@ import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.github.yingzhuo.paypay.alipay.AlipayAmountTransformer;
 import com.github.yingzhuo.paypay.alipay.AlipayHelper;
-import com.github.yingzhuo.paypay.alipay.autoconfig.AlipayConfigProps;
+import com.github.yingzhuo.paypay.alipay.AmountTransformer;
+import com.github.yingzhuo.paypay.alipay.configgroup.ConfigGroupManager;
 import com.github.yingzhuo.paypay.alipay.exception.AlipayBusinessException;
 import com.github.yingzhuo.paypay.alipay.exception.AlipayClientException;
 import com.github.yingzhuo.paypay.alipay.model.PrepaymentParams;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.DecimalFormat;
 
@@ -40,28 +39,38 @@ public class AlipayHelperImpl implements AlipayHelper {
     private final static String CHARSET = "UTF-8";
     private final static String SIGN_TYPE = "RSA2";
     private final static String PRODUCT_CODE = "QUICK_MSECURITY_PAY";
+    private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("######0.00");
 
-    private final AlipayConfigProps props;
-    private final AlipayAmountTransformer transformer;
-    private final DecimalFormat df = new DecimalFormat("######0.00");
+    private AmountTransformer amountTransformer;
+    private ConfigGroupManager configGroupManager;
 
-    public AlipayHelperImpl(AlipayConfigProps props, AlipayAmountTransformer transformer) {
-        this.props = props;
-        this.transformer = transformer;
+    public void setAmountTransformer(AmountTransformer amountTransformer) {
+        this.amountTransformer = amountTransformer;
+    }
+
+    public void setConfigGroupManager(ConfigGroupManager configGroupManager) {
+        this.configGroupManager = configGroupManager;
     }
 
     @Override
-    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
+    public PrepaymentParams createPrepaymentParams(String configGroupName, String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
 
-        amountInCent = transformer.transform(amountInCent);
+        val configGroup = configGroupManager.find(configGroupName);
+        if (configGroup == null) {
+            throw new IllegalArgumentException("ConfigGroup NOT fround. name = '" + configGroupName + "'.");
+        }
+
+        if (amountTransformer != null) {
+            amountInCent = amountTransformer.transform(amountInCent);
+        }
 
         AlipayClient alipayClient = new DefaultAlipayClient(
                 URL,
-                props.getAppId(),
-                props.getPrivateKey(),
+                configGroup.getAppId(),
+                configGroup.getPrivateKey(),
                 PACKAGE_FORMAT,
                 CHARSET,
-                props.getPublicKey(),
+                configGroup.getPublicKey(),
                 SIGN_TYPE);
 
         val request = new AlipayTradeAppPayRequest();
@@ -75,7 +84,7 @@ public class AlipayHelperImpl implements AlipayHelper {
         model.setTotalAmount(amount);
         model.setProductCode(PRODUCT_CODE);
         request.setBizModel(model);
-        request.setNotifyUrl(props.getCallbackNotifyUrl());
+        request.setNotifyUrl(configGroup.getCallbackNotifyUrl());
 
         PrepaymentParams params = new PrepaymentParams();
 
@@ -95,21 +104,23 @@ public class AlipayHelperImpl implements AlipayHelper {
     }
 
     @Override
-    public boolean isTradeSuccess(String tradeId) {
-        if (StringUtils.isBlank(tradeId)) {
-            return false;
+    public String getStatus(String configGroupName, String tradeId) {
+        val configGroup = configGroupManager.find(configGroupName);
+        if (configGroup == null) {
+            throw new IllegalArgumentException("ConfigGroup NOT fround. name = '" + configGroupName + "'.");
         }
 
         val request = new AlipayTradeQueryRequest();
 
         val alipayClient = new DefaultAlipayClient(
                 URL,
-                props.getAppId(),
-                props.getPrivateKey(),
+                configGroup.getAppId(),
+                configGroup.getPrivateKey(),
                 PACKAGE_FORMAT,
                 CHARSET,
-                props.getPublicKey(),
-                SIGN_TYPE);
+                configGroup.getPublicKey(),
+                SIGN_TYPE
+        );
 
         val model = new AlipayTradeAppPayModel();
         model.setOutTradeNo(tradeId);
@@ -127,7 +138,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             // TRADE_CLOSED (未付款交易超时关闭，或支付完成后全额退款)
             // TRADE_SUCCESS (交易支付成功)
             // TRADE_FINISHED (交易结束，不可退款)
-            return StringUtils.equalsIgnoreCase("TRADE_SUCCESS", response.getTradeStatus());
+            return response.getTradeStatus();
 
         } catch (AlipayApiException e) {
             throw new AlipayClientException(e);
@@ -137,7 +148,7 @@ public class AlipayHelperImpl implements AlipayHelper {
     private String parseAmount(long amountInCent) {
         double payment = (double) amountInCent;
         payment = payment / 100.00;
-        return df.format(payment);
+        return DECIMAL_FORMAT.format(payment);
     }
 
 }

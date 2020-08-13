@@ -16,15 +16,7 @@ package com.github.yingzhuo.paypay.alipay;
  * @author 应卓
  */
 @FunctionalInterface
-public interface AlipayAmountTransformer {
-
-    public static AlipayAmountTransformer alwaysOneCentTransformer() {
-        return n -> 1L;
-    }
-
-    public static AlipayAmountTransformer nopTransformer() {
-        return n -> n;
-    }
+public interface AmountTransformer {
 
     public long transform(long amountInCent);
 

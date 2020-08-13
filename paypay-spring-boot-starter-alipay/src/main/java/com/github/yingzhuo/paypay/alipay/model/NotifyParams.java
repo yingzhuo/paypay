@@ -27,6 +27,38 @@ import java.io.Serializable;
 @Builder
 public class NotifyParams implements Serializable {
 
+    private String notifyTime;//1 通知的发送时间
+    private String notifyType;//1 通知的类型 trade_status_sync
+    private String notifyId;//1 通知校验ID
+    private String appId;//1 支付宝分配给开发者的应用Id
+    private String charset;//1 编码格式，如utf-8、gbk、gb2312等
+    private String version;//1 接口版本
+    private String signType;//1 签名类型:RSA2
+    private String sign;//1 签名
+    private String tradeNo; //1 支付宝交易凭证号
+    private String outTradeNo; //1 商户订单号 交易单号
+    private String outBizNo; //0 商户业务号
+    private String buyerId; //0 买家支付宝用户号 以2088开头的纯16位数字
+    private String buyerLogonId; //0 买家支付宝账号
+    private String sellerId;//0 卖家支付宝用户号
+    private String sellerEmail;//0 卖家支付宝账号
+    private String tradeStatus;//0 交易目前所处的状态，
+    private String totalAmount;//0 本次交易支付的订单金额，单位为人民币（元）
+    private String receiptAmount;//0 商家在交易中实际收到的款项，单位为元
+    private String invoiceAmount;//0 用户在交易中支付的可开发票的金额
+    private String buyerPayAmount;//0 用户在交易中支付的金额
+    private String pointAmount;//0 使用集分宝支付的金额
+    private String refundFee;//0 总退款金额
+    private String subject;//0 订单标题
+    private String body;//0 商品描述
+    private String gmtCreate; //0 交易创建时间
+    private String gmtPayment; //0 付款时间
+    private String gmtRefund; //0 交易退款时间
+    private String gmtClose; //0 交易结束时间
+    private String fundBillList; //0 支付金额信息
+    private String passbackParams; //0 公共回传参数，如果请求时传递了该参数，则返回给商户时会在异步通知时将该参数原样返回。
+    private String voucherDetailList; //0 优惠券信息
+
     public static NotifyParams parse(HttpServletRequest request) {
         return NotifyParams.builder()
                 .notifyId(request.getParameter("notify_time"))
@@ -62,37 +94,5 @@ public class NotifyParams implements Serializable {
                 .voucherDetailList(request.getParameter("voucher_detail_list"))
                 .build();
     }
-
-    private String notifyTime;//1 通知的发送时间
-    private String notifyType;//1 通知的类型 trade_status_sync
-    private String notifyId;//1 通知校验ID
-    private String appId;//1 支付宝分配给开发者的应用Id
-    private String charset;//1 编码格式，如utf-8、gbk、gb2312等
-    private String version;//1 接口版本
-    private String signType;//1 签名类型:RSA2
-    private String sign;//1 签名
-    private String tradeNo; //1 支付宝交易凭证号
-    private String outTradeNo; //1 商户订单号 交易单号
-    private String outBizNo; //0 商户业务号
-    private String buyerId; //0 买家支付宝用户号 以2088开头的纯16位数字
-    private String buyerLogonId; //0 买家支付宝账号
-    private String sellerId;//0 卖家支付宝用户号
-    private String sellerEmail;//0 卖家支付宝账号
-    private String tradeStatus;//0 交易目前所处的状态，
-    private String totalAmount;//0 本次交易支付的订单金额，单位为人民币（元）
-    private String receiptAmount;//0 商家在交易中实际收到的款项，单位为元
-    private String invoiceAmount;//0 用户在交易中支付的可开发票的金额
-    private String buyerPayAmount;//0 用户在交易中支付的金额
-    private String pointAmount;//0 使用集分宝支付的金额
-    private String refundFee;//0 总退款金额
-    private String subject;//0 订单标题
-    private String body;//0 商品描述
-    private String gmtCreate; //0 交易创建时间
-    private String gmtPayment; //0 付款时间
-    private String gmtRefund; //0 交易退款时间
-    private String gmtClose; //0 交易结束时间
-    private String fundBillList; //0 支付金额信息
-    private String passbackParams; //0 公共回传参数，如果请求时传递了该参数，则返回给商户时会在异步通知时将该参数原样返回。
-    private String voucherDetailList; //0 优惠券信息
 
 }

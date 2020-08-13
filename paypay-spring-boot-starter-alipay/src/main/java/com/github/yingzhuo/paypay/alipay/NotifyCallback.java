@@ -10,7 +10,6 @@
 */
 package com.github.yingzhuo.paypay.alipay;
 
-import com.alipay.api.AlipayApiException;
 import com.github.yingzhuo.paypay.alipay.model.NotifyParams;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,17 +19,7 @@ import java.io.IOException;
 /**
  * @author 应卓
  */
-public interface AlipayNotifyCallback {
-
-    public default void onInvalidSign(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams) throws IOException {
-        response.getWriter().write("failure");
-        response.getWriter().flush();
-    }
-
-    public default void onAlipayApiException(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams, AlipayApiException ex) throws IOException {
-        response.getWriter().write("failure");
-        response.getWriter().flush();
-    }
+public interface NotifyCallback {
 
     public default void onTradeSuccess(HttpServletRequest request, HttpServletResponse response, NotifyParams notifyParams) throws IOException {
         response.getWriter().write("success");
