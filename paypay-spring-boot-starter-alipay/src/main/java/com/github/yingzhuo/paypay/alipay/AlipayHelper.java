@@ -21,10 +21,26 @@ public interface AlipayHelper {
 
     public PrepaymentParams createPrepaymentParams(String configGroupName, String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress);
 
+    public default PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
+        return createPrepaymentParams("default", tradeId, amountInCent, subject, passbackParams, timeoutExpress);
+    }
+
+    public default PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams) {
+        return createPrepaymentParams("default", tradeId, amountInCent, subject, passbackParams, "1d");
+    }
+
     public String getStatus(String configGroupName, String tradeId);
+
+    public default String getStatus(String tradeId) {
+        return getStatus("default", tradeId);
+    }
 
     public default boolean isTradeSuccess(String configGroupName, String tradeId) {
         return "TRADE_SUCCESS".equals(getStatus(configGroupName, tradeId));
+    }
+
+    public default boolean isTradeSuccess(String tradeId) {
+        return isTradeSuccess("default", tradeId);
     }
 
 }

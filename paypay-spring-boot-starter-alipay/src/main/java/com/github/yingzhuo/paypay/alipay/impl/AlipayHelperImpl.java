@@ -11,7 +11,6 @@
 package com.github.yingzhuo.paypay.alipay.impl;
 
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
@@ -26,6 +25,8 @@ import com.github.yingzhuo.paypay.alipay.exception.AlipayClientException;
 import com.github.yingzhuo.paypay.alipay.model.PrepaymentParams;
 import lombok.val;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 
 /**
@@ -64,7 +65,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             amountInCent = amountTransformer.transform(amountInCent);
         }
 
-        AlipayClient alipayClient = new DefaultAlipayClient(
+        val alipayClient = new DefaultAlipayClient(
                 URL,
                 configGroup.getAppId(),
                 configGroup.getPrivateKey(),
@@ -75,32 +76,26 @@ public class AlipayHelperImpl implements AlipayHelper {
 
         val request = new AlipayTradeAppPayRequest();
         val model = new AlipayTradeAppPayModel();
-        model.setPassbackParams(passbackParams);
-        model.setSubject(subject);
-        model.setOutTradeNo(tradeId);
-        model.setTimeoutExpress(timeoutExpress);
+        model.setPassbackParams(encode(passbackParams));
+        model.setSubject(encode(subject));
+        model.setOutTradeNo(encode(tradeId));
+        model.setTimeoutExpress(encode(timeoutExpress));
 
         final String amount = parseAmount(amountInCent);
-        model.setTotalAmount(amount);
+        model.setTotalAmount(encode(amount));
         model.setProductCode(PRODUCT_CODE);
         request.setBizModel(model);
-        request.setNotifyUrl(configGroup.getCallbackNotifyUrl());
-
-        PrepaymentParams params = new PrepaymentParams();
+        request.setNotifyUrl(encode(configGroup.getCallbackNotifyUrl()));
 
         try {
             AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
             if (!response.isSuccess()) {
                 throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());
             }
-
-            params.setAliParams(response.getBody());
-            params.setTradeId(tradeId);
+            return new PrepaymentParams(tradeId, response.getBody());
         } catch (AlipayApiException e) {
             throw new AlipayClientException(e);
         }
-
-        return params;
     }
 
     @Override
@@ -149,6 +144,14 @@ public class AlipayHelperImpl implements AlipayHelper {
         double payment = (double) amountInCent;
         payment = payment / 100.00;
         return DECIMAL_FORMAT.format(payment);
+    }
+
+    private String encode(String s) {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError();
+        }
     }
 
 }
