@@ -8,19 +8,17 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.configgroup;
+package com.github.yingzhuo.paypay.ali.exception;
+
+import com.alipay.api.AlipayApiException;
 
 /**
  * @author 应卓
- * @since 1.2.0
  */
-@FunctionalInterface
-public interface ConfigGroupManager {
+public class AlipayClientException extends RuntimeException {
 
-    public default ConfigGroup findDefault() {
-        return find("default");
+    public AlipayClientException(AlipayApiException cause) {
+        super(cause);
     }
-
-    public ConfigGroup find(String groupName);
 
 }

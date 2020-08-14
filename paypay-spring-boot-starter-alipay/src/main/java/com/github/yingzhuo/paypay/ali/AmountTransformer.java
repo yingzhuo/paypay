@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay;
+package com.github.yingzhuo.paypay.ali;
 
 /**
  * 金额变换器。一般用于测试或调试环境，如需要可将金额转换成一分钱等较小的金额。

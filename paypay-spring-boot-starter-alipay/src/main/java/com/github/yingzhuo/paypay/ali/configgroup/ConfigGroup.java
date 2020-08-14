@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.configgroup;
+package com.github.yingzhuo.paypay.ali.configgroup;
 
 import lombok.Getter;
 import lombok.Setter;

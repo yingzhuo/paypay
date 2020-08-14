@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.model;
+package com.github.yingzhuo.paypay.ali.model;
 
 import lombok.*;
 
@@ -51,15 +51,15 @@ public class NotifyParams implements Serializable {
     private String refundFee;//0 总退款金额
     private String subject;//0 订单标题
     private String body;//0 商品描述
-    private String gmtCreate; //0 交易创建时间
-    private String gmtPayment; //0 付款时间
-    private String gmtRefund; //0 交易退款时间
-    private String gmtClose; //0 交易结束时间
-    private String fundBillList; //0 支付金额信息
-    private String passbackParams; //0 公共回传参数，如果请求时传递了该参数，则返回给商户时会在异步通知时将该参数原样返回。
-    private String voucherDetailList; //0 优惠券信息
+    private String gmtCreate;//0 交易创建时间
+    private String gmtPayment;//0 付款时间
+    private String gmtRefund;//0 交易退款时间
+    private String gmtClose;//0 交易结束时间
+    private String fundBillList;//0 支付金额信息
+    private String passbackParams;//0 公共回传参数，如果请求时传递了该参数，则返回给商户时会在异步通知时将该参数原样返回。
+    private String voucherDetailList;//0 优惠券信息
 
-    public static NotifyParams parse(HttpServletRequest request) {
+    public static NotifyParams parseFromRequest(HttpServletRequest request) {
         return NotifyParams.builder()
                 .notifyId(request.getParameter("notify_time"))
                 .notifyType(request.getParameter("notify_type"))

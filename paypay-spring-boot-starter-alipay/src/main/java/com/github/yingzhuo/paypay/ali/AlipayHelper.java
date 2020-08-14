@@ -8,9 +8,9 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay;
+package com.github.yingzhuo.paypay.ali;
 
-import com.github.yingzhuo.paypay.alipay.model.PrepaymentParams;
+import com.github.yingzhuo.paypay.ali.model.PrepaymentParams;
 
 /**
  * @author 应卓
@@ -36,7 +36,7 @@ public interface AlipayHelper {
     }
 
     public default boolean isTradeSuccess(String configGroupName, String tradeId) {
-        return "TRADE_SUCCESS".equals(getStatus(configGroupName, tradeId));
+        return "TRADE_SUCCESS".equalsIgnoreCase(getStatus(configGroupName, tradeId));
     }
 
     public default boolean isTradeSuccess(String tradeId) {

@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.exception;
+package com.github.yingzhuo.paypay.ali.exception;
 
 /**
  * @author 应卓

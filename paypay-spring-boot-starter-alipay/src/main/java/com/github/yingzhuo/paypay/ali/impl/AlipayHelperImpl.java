@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.impl;
+package com.github.yingzhuo.paypay.ali.impl;
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.DefaultAlipayClient;
@@ -17,12 +17,12 @@ import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.github.yingzhuo.paypay.alipay.AlipayHelper;
-import com.github.yingzhuo.paypay.alipay.AmountTransformer;
-import com.github.yingzhuo.paypay.alipay.configgroup.ConfigGroupManager;
-import com.github.yingzhuo.paypay.alipay.exception.AlipayBusinessException;
-import com.github.yingzhuo.paypay.alipay.exception.AlipayClientException;
-import com.github.yingzhuo.paypay.alipay.model.PrepaymentParams;
+import com.github.yingzhuo.paypay.ali.AlipayHelper;
+import com.github.yingzhuo.paypay.ali.AmountTransformer;
+import com.github.yingzhuo.paypay.ali.configgroup.ConfigGroupManager;
+import com.github.yingzhuo.paypay.ali.exception.AlipayBusinessException;
+import com.github.yingzhuo.paypay.ali.exception.AlipayClientException;
+import com.github.yingzhuo.paypay.ali.model.PrepaymentParams;
 import lombok.val;
 
 import java.io.UnsupportedEncodingException;
@@ -35,7 +35,7 @@ import java.text.DecimalFormat;
  */
 public class AlipayHelperImpl implements AlipayHelper {
 
-    private final static String URL = "https://openapi.alipay.com/gateway.do";
+    private final static String URL = "https://openapi.ali.com/gateway.do";
     private final static String PACKAGE_FORMAT = "json";
     private final static String CHARSET = "UTF-8";
     private final static String SIGN_TYPE = "RSA2";
@@ -65,7 +65,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             amountInCent = amountTransformer.transform(amountInCent);
         }
 
-        val alipayClient = new DefaultAlipayClient(
+        val aliClient = new DefaultAlipayClient(
                 URL,
                 configGroup.getAppId(),
                 configGroup.getPrivateKey(),
@@ -88,7 +88,7 @@ public class AlipayHelperImpl implements AlipayHelper {
         request.setNotifyUrl(encode(configGroup.getCallbackNotifyUrl()));
 
         try {
-            AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
+            AlipayTradeAppPayResponse response = aliClient.sdkExecute(request);
             if (!response.isSuccess()) {
                 throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());
             }
@@ -107,7 +107,7 @@ public class AlipayHelperImpl implements AlipayHelper {
 
         val request = new AlipayTradeQueryRequest();
 
-        val alipayClient = new DefaultAlipayClient(
+        val aliClient = new DefaultAlipayClient(
                 URL,
                 configGroup.getAppId(),
                 configGroup.getPrivateKey(),
@@ -123,7 +123,7 @@ public class AlipayHelperImpl implements AlipayHelper {
         request.setBizModel(model);
 
         try {
-            AlipayTradeQueryResponse response = alipayClient.execute(request);
+            AlipayTradeQueryResponse response = aliClient.execute(request);
 
             if (!response.isSuccess()) {
                 throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());

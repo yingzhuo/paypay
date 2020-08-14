@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.alipay.model;
+package com.github.yingzhuo.paypay.ali.model;
 
 import lombok.*;
 
