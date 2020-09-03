@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.util;
+package com.github.yingzhuo.paypay.wechat.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -58,7 +58,6 @@ public final class DocumentUtils {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-
     }
 
     public static String mapToXml(Map<String, String> data) {

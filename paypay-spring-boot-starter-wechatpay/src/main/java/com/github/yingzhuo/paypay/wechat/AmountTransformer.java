@@ -8,19 +8,19 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay;
+package com.github.yingzhuo.paypay.wechat;
 
 /**
  * @author 应卓
  */
 @FunctionalInterface
-public interface WechatpayAmountTransformer {
+public interface AmountTransformer {
 
-    public static WechatpayAmountTransformer alwaysOneCentTransformer() {
+    public static AmountTransformer alwaysOneCentTransformer() {
         return n -> 1L;
     }
 
-    public static WechatpayAmountTransformer nopTransformer() {
+    public static AmountTransformer nopTransformer() {
         return n -> n;
     }
 

@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.exception;
+package com.github.yingzhuo.paypay.wechat.exception;
 
 /**
  * @author 应卓

@@ -8,17 +8,18 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.impl;
+package com.github.yingzhuo.paypay.wechat.impl;
 
-import com.github.yingzhuo.paypay.wechatpay.WechatpayAmountTransformer;
-import com.github.yingzhuo.paypay.wechatpay.WechatpayHelper;
-import com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayConfigProps;
-import com.github.yingzhuo.paypay.wechatpay.exception.WechatpayException;
-import com.github.yingzhuo.paypay.wechatpay.exception.WechatpayPrepaymentParamsCreationException;
-import com.github.yingzhuo.paypay.wechatpay.model.PrepaymentParams;
-import com.github.yingzhuo.paypay.wechatpay.util.DocumentUtils;
-import com.github.yingzhuo.paypay.wechatpay.util.HttpUtils;
-import com.github.yingzhuo.paypay.wechatpay.util.SignUtils;
+import com.github.yingzhuo.paypay.wechat.AmountTransformer;
+import com.github.yingzhuo.paypay.wechat.WechatpayHelper;
+import com.github.yingzhuo.paypay.wechat.configgroup.ConfigGroupManager;
+import com.github.yingzhuo.paypay.wechat.exception.WechatpayException;
+import com.github.yingzhuo.paypay.wechat.exception.WechatpayPrepaymentParamsCreationException;
+import com.github.yingzhuo.paypay.wechat.model.PrepaymentParams;
+import com.github.yingzhuo.paypay.wechat.util.DocumentUtils;
+import com.github.yingzhuo.paypay.wechat.util.HttpUtils;
+import com.github.yingzhuo.paypay.wechat.util.SignUtils;
+import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,30 +32,40 @@ import java.util.Map;
  */
 public class WechatpayHelperImpl implements WechatpayHelper {
 
-    private final WechatpayConfigProps props;
-    private final WechatpayAmountTransformer transformer;
+    private AmountTransformer transformer;
+    private ConfigGroupManager configGroupManager;
 
-    public WechatpayHelperImpl(WechatpayConfigProps props, WechatpayAmountTransformer transformer) {
-        this.props = props;
+    public void setTransformer(AmountTransformer transformer) {
         this.transformer = transformer;
     }
 
-    @Override
-    public PrepaymentParams createPrepaymentParams(String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire, String ip) {
+    public void setConfigGroupManager(ConfigGroupManager configGroupManager) {
+        this.configGroupManager = configGroupManager;
+    }
 
-        amountInCent = transformer.transform(amountInCent);
+    @Override
+    public PrepaymentParams createPrepaymentParams(String configGroupName, String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire, String ip) {
+
+        val configGroup = configGroupManager.find(configGroupName);
+        if (configGroup == null) {
+            throw new IllegalArgumentException("ConfigGroup NOT fround. name = '" + configGroupName + "'.");
+        }
+
+        if (transformer != null) {
+            amountInCent = transformer.transform(amountInCent);
+        }
 
         PrepaymentParams prepaymentParams = new PrepaymentParams();
         Map<String, String> params = new HashMap<>();
-        params.put("appid", props.getAppId());
-        params.put("mch_id", props.getMchId());
+        params.put("appid", configGroup.getAppId());
+        params.put("mch_id", configGroup.getMchId());
         params.put("nonce_str", RandomStringUtils.randomAlphanumeric(32));
         params.put("sign_type", "MD5");
         params.put("body", subject);
         params.put("out_trade_no", tradeId);
         params.put("total_fee", Long.toString(amountInCent));
         params.put("spbill_create_ip", ip);
-        params.put("notify_url", props.getCallbackNotifyUrl());
+        params.put("notify_url", configGroup.getCallbackNotifyUrl());
         params.put("trade_type", "APP");
         params.put("attach", passbackParams);
 
@@ -62,7 +73,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             params.put("time_expire", timeExpire);
         }
 
-        String sign = SignUtils.createSign(params, props.getSecretKey());
+        String sign = SignUtils.createSign(params, configGroup.getSecretKey());
         params.put("sign", sign);
         String wxReqStr = DocumentUtils.mapToXml(params);
 
@@ -71,8 +82,8 @@ public class WechatpayHelperImpl implements WechatpayHelper {
 
         if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("return_code"))) {
             if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("result_code"))) {
-                prepaymentParams.setAppId(props.getAppId());
-                prepaymentParams.setPartnerId(props.getMchId());
+                prepaymentParams.setAppId(configGroup.getAppId());
+                prepaymentParams.setPartnerId(configGroup.getMchId());
                 prepaymentParams.setPrepayId(resultObject.get("prepay_id"));
                 prepaymentParams.setPackageValue("Sign=WXPay");
                 prepaymentParams.setNonceStr(RandomStringUtils.randomAlphanumeric(32));
@@ -85,7 +96,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 hashMap.put("noncestr", prepaymentParams.getNonceStr());
                 hashMap.put("timestamp", Long.toString(prepaymentParams.getTimestamp()));
                 hashMap.put("package", prepaymentParams.getPackageValue());
-                String paySign = SignUtils.createSign(hashMap, props.getSecretKey());
+                String paySign = SignUtils.createSign(hashMap, configGroup.getSecretKey());
 
                 prepaymentParams.setSign(paySign);
                 prepaymentParams.setTradeId(tradeId);
@@ -103,18 +114,20 @@ public class WechatpayHelperImpl implements WechatpayHelper {
     }
 
     @Override
-    public boolean isTradeSuccess(String tradeId) {
-        if (StringUtils.isBlank(tradeId)) {
-            return false;
+    public String getTradeStatus(String configGroupName, String tradeId) {
+
+        val configGroup = configGroupManager.find(configGroupName);
+        if (configGroup == null) {
+            throw new IllegalArgumentException("ConfigGroup NOT fround. name = '" + configGroupName + "'.");
         }
 
         try {
             Map<String, String> params = new HashMap<>();
-            params.put("appid", props.getAppId());
-            params.put("mch_id", props.getMchId());
+            params.put("appid", configGroup.getAppId());
+            params.put("mch_id", configGroup.getMchId());
             params.put("nonce_str", RandomStringUtils.randomAlphanumeric(32));
             params.put("out_trade_no", tradeId);//微信的订单号，优先使用 transaction_id  二选一
-            String sign = SignUtils.createSign(params, props.getSecretKey());
+            String sign = SignUtils.createSign(params, configGroup.getSecretKey());
             params.put("sign", sign);
             String wxReqStr = DocumentUtils.mapToXml(params);
 
@@ -122,12 +135,8 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             Map<String, String> resultObject = DocumentUtils.xmlToMap(resultInfo);
 
             if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("return_code"))) {
-
                 if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("result_code"))) {
-
-                    String trade_state = resultObject.get("trade_state");
-                    return StringUtils.equalsIgnoreCase("SUCCESS", trade_state);
-
+                    return resultObject.get("trade_state");
                 } else {
                     String code = resultObject.get("err_code");
                     String subMsg = resultObject.get("err_code_des");
@@ -141,6 +150,5 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             throw new WechatpayException(e);
         }
     }
-
 
 }

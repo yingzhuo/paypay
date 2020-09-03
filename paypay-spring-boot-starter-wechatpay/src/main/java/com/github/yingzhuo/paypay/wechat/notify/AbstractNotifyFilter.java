@@ -8,52 +8,50 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.web;
+package com.github.yingzhuo.paypay.wechat.notify;
 
-import com.github.yingzhuo.paypay.wechatpay.WechatpayNotifyCallback;
-import com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayConfigProps;
-import com.github.yingzhuo.paypay.wechatpay.util.DocumentUtils;
-import com.github.yingzhuo.paypay.wechatpay.util.SignUtils;
+import com.github.yingzhuo.paypay.wechat.configgroup.ConfigGroupManager;
+import com.github.yingzhuo.paypay.wechat.util.DocumentUtils;
+import com.github.yingzhuo.paypay.wechat.util.SignUtils;
+import com.github.yingzhuo.paypay.wechat.util.XmlResponse;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author 白宝鹏
  * @author 应卓
+ * @since 1.2.0
  */
 @Slf4j
-@SuppressWarnings("Duplicates")
-public class NotifyFilter extends OncePerRequestFilter {
+public class AbstractNotifyFilter extends OncePerRequestFilter implements Filter, InitializingBean {
 
-    private final WechatpayConfigProps props;
-    private final WechatpayNotifyCallback callback;
+    public static final String TRADE_ID_KEY = "out_trade_no";
 
-    public NotifyFilter(WechatpayConfigProps props, WechatpayNotifyCallback callback) {
-        this.props = props;
-        this.callback = callback;
-    }
+    protected ConfigGroupManager configGroupManager;
+    protected GroupNameResolver groupNameResolver;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
-        doLog(request);
+    protected final void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+        val secretKey = configGroupManager.find(groupNameResolver.resolve(request)).getSecretKey();
 
         final String requestXml = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
 
         if (StringUtils.isBlank(requestXml)) {
-            callback.onEmptyRequestBody(response);
+            onEmptyRequestBody(response);
             return;
         }
 
@@ -101,66 +99,65 @@ public class NotifyFilter extends OncePerRequestFilter {
                     map.put("time_end", requestObjMap.get("time_end"));
                     log.info("结果字典是:{} 封装字典是:{}", requestObjMap, map);
 
-                    String signLocal = SignUtils.createSign(map, props.getSecretKey());
+                    String signLocal = SignUtils.createSign(map, secretKey);
 
                     log.info("输出结果是: 支付结果通知 sign:{},signLocal:{}", requestObjMap.get("sign"), signLocal);
                     boolean isValidSign = StringUtils.equalsIgnoreCase(requestObjMap.get("sign"), signLocal);
 
                     if (isValidSign) {
-                        callback.onTradeSuccess(request, response, requestObjMap);
+                        onTradeSuccess(request, response, requestObjMap);
                     } else {
-                        callback.onInvalidSign(request, response, requestObjMap);
+                        onInvalidSign(request, response, requestObjMap);
                     }
 
                 } else {
-                    callback.onTradeFailure(request, response, requestObjMap);
+                    onTradeFailure(request, response, requestObjMap);
                 }
 
             } else {
-                callback.onTradeFailure(request, response, requestObjMap);
+                onTradeFailure(request, response, requestObjMap);
             }
 
         } catch (Exception e) {
-            callback.onException(request, response, requestObjMap, e);
+            onException(request, response, requestObjMap, e);
         }
     }
 
-    private void doLog(HttpServletRequest request) {
+    protected void onEmptyRequestBody(HttpServletResponse response) throws IOException {
+        XmlResponse.write(response, "SUCCESS", "OK");
+    }
+
+    protected void onInvalidSign(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
+        XmlResponse.write(response, "SUCCESS", "OK");
+    }
+
+    protected void onTradeSuccess(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
+        XmlResponse.write(response, "SUCCESS", "OK");
+    }
+
+    protected void onTradeFailure(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap) throws IOException {
+        XmlResponse.write(response, "SUCCESS", "OK");
+    }
+
+    protected void onException(HttpServletRequest request, HttpServletResponse response, Map<String, String> requestObjMap, Exception ex) {
         try {
-            log.debug(StringUtils.repeat('-', 120));
-
-            log.debug("[Path]: ");
-            log.debug("\t\t\t{}", decode(request.getRequestURI()));
-
-            log.debug("[Method]: ");
-            log.debug("\t\t\t{}", request.getMethod());
-
-            log.debug("[Headers]: ");
-            Enumeration<String> headerNames = request.getHeaderNames();
-            while (headerNames.hasMoreElements()) {
-                String name = headerNames.nextElement();
-                String value = request.getHeader(name);
-                log.debug("\t\t\t{} = {}", name, name.equalsIgnoreCase("cookie") ? StringUtils.abbreviate(value, 60) : value);
-            }
-
-            log.debug("[Params]: ");
-            Enumeration<String> paramNames = request.getParameterNames();
-            while (paramNames.hasMoreElements()) {
-                String name = paramNames.nextElement();
-                String value = request.getParameter(name);
-                log.debug("\t\t\t{} = {}", name, value);
-            }
-
-            log.debug(StringUtils.repeat('-', 120));
-        } catch (Exception ignore) {
+            XmlResponse.write(response, "SUCCESS", "OK");
+        } catch (IOException ignored) {
         }
     }
 
-    private String decode(String path) {
-        try {
-            return URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError();
-        }
+    @Override
+    public void afterPropertiesSet() throws ServletException {
+        super.afterPropertiesSet();
+        Assert.notNull(configGroupManager, () -> null);
+        Assert.notNull(groupNameResolver, () -> null);
+    }
+
+    public void setConfigGroupManager(ConfigGroupManager configGroupManager) {
+        this.configGroupManager = configGroupManager;
+    }
+
+    public void setGroupNameResolver(GroupNameResolver groupNameResolver) {
+        this.groupNameResolver = groupNameResolver;
     }
 }

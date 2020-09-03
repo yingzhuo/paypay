@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.util;
+package com.github.yingzhuo.paypay.wechat.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;

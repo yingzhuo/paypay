@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.model;
+package com.github.yingzhuo.paypay.wechat.model;
 
 import lombok.Getter;
 import lombok.Setter;

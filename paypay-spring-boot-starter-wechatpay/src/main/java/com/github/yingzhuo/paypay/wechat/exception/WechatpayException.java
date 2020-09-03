@@ -1,4 +1,4 @@
-package com.github.yingzhuo.paypay.wechatpay.exception;
+package com.github.yingzhuo.paypay.wechat.exception;
 
 public class WechatpayException extends RuntimeException {
 

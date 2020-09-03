@@ -28,12 +28,12 @@ import java.util.Map;
  */
 @EnableConfigurationProperties(AlipayProperties.class)
 @ConditionalOnProperty(prefix = "paypay.alipay", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class AlipayCoreAutoConfig {
+public class AlipayAutoConfig {
 
     @Autowired(required = false)
     private AmountTransformer transformer;
 
-    @Bean
+    @Bean(name = "alipayConfigGroupManager")
     public ConfigGroupManager configGroupManager(AlipayProperties props) {
         final Map<String, ConfigGroup> map = props.getConfigGroups();
 

@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayHelperAutoConfig,\
-com.github.yingzhuo.paypay.wechatpay.autoconfig.WechatpayNotifyAutoConfig
+    com.github.yingzhuo.paypay.wechat.autoconfig.WechatpayAutoConfig

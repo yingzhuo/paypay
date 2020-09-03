@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    com.github.yingzhuo.paypay.ali.autoconfig.AlipayCoreAutoConfig,\
-    com.github.yingzhuo.paypay.ali.autoconfig.AlipayWebAutoConfig
+    com.github.yingzhuo.paypay.ali.autoconfig.AlipayAutoConfig

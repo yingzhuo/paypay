@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.util;
+package com.github.yingzhuo.paypay.wechat.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,4 +44,5 @@ public final class SignUtils {
         String sign = DigestUtils.md5Hex(buf.substring(1));
         return sign.toUpperCase();
     }
+
 }

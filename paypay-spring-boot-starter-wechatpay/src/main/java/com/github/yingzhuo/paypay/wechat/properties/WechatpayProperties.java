@@ -8,9 +8,9 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.ali.properties;
+package com.github.yingzhuo.paypay.wechat.properties;
 
-import com.github.yingzhuo.paypay.ali.configgroup.ConfigGroup;
+import com.github.yingzhuo.paypay.wechat.configgroup.ConfigGroup;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,12 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author 白宝鹏
  * @author 应卓
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "paypay.alipay")
-public class AlipayProperties {
+@ConfigurationProperties(prefix = "paypay.wechatpay")
+public class WechatpayProperties {
 
     private boolean enabled = true;
     private Map<String, ConfigGroup> configGroups = new HashMap<>();

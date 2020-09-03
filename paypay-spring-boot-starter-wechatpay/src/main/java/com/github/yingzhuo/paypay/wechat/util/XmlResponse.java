@@ -8,7 +8,7 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechatpay.util;
+package com.github.yingzhuo.paypay.wechat.util;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
