@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.yingzhuo</groupId>
     <artifactId>paypay</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.0-20200903</version>
     <modules>
         <module>paypay-spring-boot-starter-common</module>
         <module>paypay-spring-boot-starter-alipay</module>

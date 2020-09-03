@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.yingzhuo</groupId>
         <artifactId>paypay</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.0-20200903</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>paypay-spring-boot-starter-alipay</artifactId>
