@@ -15,13 +15,14 @@ import com.github.yingzhuo.paypay.wechat.WechatpayConfig;
 import com.github.yingzhuo.paypay.wechat.WechatpayHelper;
 import com.github.yingzhuo.paypay.wechat.exception.WechatpayException;
 import com.github.yingzhuo.paypay.wechat.exception.WechatpayPrepaymentParamsCreationException;
-import com.github.yingzhuo.paypay.wechat.model.Prepayment;
+import com.github.yingzhuo.paypay.wechat.model.WechatpayPrepayment;
 import com.github.yingzhuo.paypay.wechat.util.DocumentUtils;
 import com.github.yingzhuo.paypay.wechat.util.HttpUtils;
 import com.github.yingzhuo.paypay.wechat.util.SignUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,10 @@ public class WechatpayHelperImpl implements WechatpayHelper {
     }
 
     @Override
-    public Prepayment prepay(WechatpayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire) {
+    public WechatpayPrepayment prepay(WechatpayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire) {
+        validateConfig(config);
+        Validate.notEmpty(tradeId);
+        Validate.isTrue(amountInCent >= 0L);
 
         if (transformer != null) {
             amountInCent = transformer.transform(amountInCent);
@@ -48,7 +52,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
 
         final String nonce = RandomStringUtils.randomAlphanumeric(32);
 
-        Prepayment prepayment = new Prepayment();
+        WechatpayPrepayment prepayment = new WechatpayPrepayment();
         Map<String, String> params = new HashMap<>();
         params.put("appid", config.getAppId());
         params.put("mch_id", config.getMchId());
@@ -81,6 +85,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 prepayment.setPackageValue("Sign=WXPay");
                 prepayment.setNonceStr(nonce);
                 prepayment.setTimestamp(System.currentTimeMillis() / 1000);
+                prepayment.setTradeId(tradeId);
 
                 Map<String, String> hashMap = new HashMap<>();
                 hashMap.put("appid", prepayment.getAppId());
@@ -90,9 +95,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
                 hashMap.put("timestamp", Long.toString(prepayment.getTimestamp()));
                 hashMap.put("package", prepayment.getPackageValue());
                 String paySign = SignUtils.createSign(hashMap, config.getSecretKey());
-
                 prepayment.setSign(paySign);
-                prepayment.setTradeId(tradeId);
             } else {
                 String subMsg = resultObject.get("err_code_des");
                 String code = resultObject.get("err_code");
@@ -109,6 +112,8 @@ public class WechatpayHelperImpl implements WechatpayHelper {
 
     @Override
     public String status(WechatpayConfig config, String tradeId) {
+        validateConfig(config);
+        Validate.notEmpty(tradeId);
 
         try {
             Map<String, String> params = new HashMap<>();
@@ -144,6 +149,14 @@ public class WechatpayHelperImpl implements WechatpayHelper {
     public boolean isSuccess(WechatpayConfig config, String tradeId) {
         final String status = status(config, tradeId);
         return StringUtils.equalsIgnoreCase("SUCCESS", status);
+    }
+
+    private void validateConfig(WechatpayConfig config) {
+        Validate.notNull(config);
+        Validate.notEmpty(config.getAppId());
+        Validate.notEmpty(config.getCallbackNotifyUrl());
+        Validate.notEmpty(config.getMchId());
+        Validate.notEmpty(config.getSecretKey());
     }
 
 }

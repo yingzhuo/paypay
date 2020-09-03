@@ -21,7 +21,7 @@ import com.github.yingzhuo.paypay.ali.AlipayConfig;
 import com.github.yingzhuo.paypay.ali.AlipayHelper;
 import com.github.yingzhuo.paypay.ali.exception.AlipayBusinessException;
 import com.github.yingzhuo.paypay.ali.exception.AlipayClientException;
-import com.github.yingzhuo.paypay.ali.model.Prepayment;
+import com.github.yingzhuo.paypay.ali.model.AlipayPrepayment;
 import com.github.yingzhuo.paypay.common.AmountTransformer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +51,7 @@ public class AlipayHelperImpl implements AlipayHelper {
     }
 
     @Override
-    public Prepayment prepay(AlipayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
+    public AlipayPrepayment prepay(AlipayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeoutExpress) {
         // 检查支付所需的参数是否正确
         validateConfig(config);
         validateTradeId(tradeId);
@@ -86,7 +86,7 @@ public class AlipayHelperImpl implements AlipayHelper {
             if (!response.isSuccess()) {
                 throw new AlipayBusinessException(response.getMsg(), response.getSubMsg());
             }
-            return new Prepayment(tradeId, response.getBody());
+            return new AlipayPrepayment(tradeId, response.getBody());
         } catch (AlipayApiException e) {
             throw new AlipayClientException(e);
         }
@@ -142,19 +142,19 @@ public class AlipayHelperImpl implements AlipayHelper {
     }
 
     private void validateConfig(AlipayConfig config) {
-        Validate.notNull(config, "阿里支付配置不可为空");
-        Validate.notBlank(config.getAppId(), "阿里支付配置的应用ID不可为空");
-        Validate.notBlank(config.getCallbackNotifyUrl(), "阿里支付配置的回调地址不可为空");
-        Validate.notBlank(config.getAppPrivateKey(), "阿里支付配置的应用私钥不可为空");
-        Validate.notBlank(config.getAlipayPublicKey(), "阿里支付配置的阿里支付公钥不可为空");
+        Validate.notNull(config);
+        Validate.notBlank(config.getAppId());
+        Validate.notBlank(config.getCallbackNotifyUrl());
+        Validate.notBlank(config.getAppPrivateKey());
+        Validate.notBlank(config.getAlipayPublicKey());
     }
 
     private void validateTradeId(String tradeId) {
-        Validate.notBlank(tradeId, "tradeId不可为空");
+        Validate.notBlank(tradeId);
     }
 
     private void validateAmount(long amountInCent) {
-        Validate.validState(amountInCent >= 0L, "支付金额必须大于等于0");
+        Validate.isTrue(amountInCent >= 0L);
     }
 
     private String encode(String s) {

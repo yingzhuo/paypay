@@ -21,7 +21,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Prepayment {
+public class WechatpayPrepayment {
 
     /**
      * 交易编号

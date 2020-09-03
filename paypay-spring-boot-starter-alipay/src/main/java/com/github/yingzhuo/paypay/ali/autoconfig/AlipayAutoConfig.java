@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * @author 应卓
  */
-public class AlipayAutoConfig {
+class AlipayAutoConfig {
 
     @Autowired(required = false)
     private AmountTransformer transformer;

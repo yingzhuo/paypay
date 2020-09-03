@@ -23,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Prepayment implements Serializable {
+public class AlipayPrepayment implements Serializable {
 
     /**
      * 交易编号

@@ -10,7 +10,7 @@
 */
 package com.github.yingzhuo.paypay.wechat;
 
-import com.github.yingzhuo.paypay.wechat.model.Prepayment;
+import com.github.yingzhuo.paypay.wechat.model.WechatpayPrepayment;
 
 /**
  * @author 白宝鹏
@@ -18,7 +18,7 @@ import com.github.yingzhuo.paypay.wechat.model.Prepayment;
  */
 public interface WechatpayHelper {
 
-    public Prepayment prepay(WechatpayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire);
+    public WechatpayPrepayment prepay(WechatpayConfig config, String tradeId, long amountInCent, String subject, String passbackParams, String timeExpire);
 
     public String status(WechatpayConfig config, String tradeId);
 
