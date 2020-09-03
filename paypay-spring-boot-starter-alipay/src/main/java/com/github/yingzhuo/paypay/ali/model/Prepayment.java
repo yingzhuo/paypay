@@ -23,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PrepaymentParams implements Serializable {
+public class Prepayment implements Serializable {
 
     /**
      * 交易编号
@@ -33,6 +33,6 @@ public class PrepaymentParams implements Serializable {
     /**
      * 阿里支付参数
      */
-    private String aliParams;
+    private String params;
 
 }

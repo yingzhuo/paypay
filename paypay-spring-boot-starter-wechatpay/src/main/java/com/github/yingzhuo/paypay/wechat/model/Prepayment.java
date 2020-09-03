@@ -21,7 +21,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PrepaymentParams {
+public class Prepayment {
 
     /**
      * 交易编号

@@ -25,6 +25,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Deprecated
 public class NotifyParams implements Serializable {
 
     private String notifyTime;//1 通知的发送时间

@@ -8,19 +8,16 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechat.configgroup;
+package com.github.yingzhuo.paypay.common;
 
 /**
+ * 金额变换器。一般用于测试或调试环境，如需要可将金额转换成一分钱等较小的金额。
+ *
  * @author 应卓
- * @since 1.2.0
  */
 @FunctionalInterface
-public interface ConfigGroupManager {
+public interface AmountTransformer {
 
-    public default ConfigGroup findDefault() {
-        return find("default");
-    }
-
-    public ConfigGroup find(String groupName);
+    public long transform(long amountInCent);
 
 }

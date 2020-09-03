@@ -12,6 +12,12 @@
     <artifactId>paypay-spring-boot-starter-wechatpay</artifactId>
 
     <dependencies>
+        <!-- paypay -->
+        <dependency>
+            <groupId>com.github.yingzhuo</groupId>
+            <artifactId>paypay-spring-boot-starter-common</artifactId>
+        </dependency>
+
         <!-- springboot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

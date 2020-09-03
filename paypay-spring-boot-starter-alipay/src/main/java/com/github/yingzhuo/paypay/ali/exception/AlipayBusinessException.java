@@ -16,7 +16,7 @@ package com.github.yingzhuo.paypay.ali.exception;
  */
 public class AlipayBusinessException extends RuntimeException {
 
-    private String subMessage;
+    private final String subMessage;
 
     public AlipayBusinessException(String message, String subMessage) {
         super(message);

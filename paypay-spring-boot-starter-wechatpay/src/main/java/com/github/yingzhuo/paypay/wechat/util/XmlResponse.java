@@ -10,9 +10,6 @@
 */
 package com.github.yingzhuo.paypay.wechat.util;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 /**
  * @author 白宝鹏
  * @author 应卓
@@ -33,10 +30,10 @@ public final class XmlResponse {
         return sb.toString();
     }
 
-    public static void write(HttpServletResponse response, String returnCode, String returnMsg) throws IOException {
-        String xml = of(returnCode, returnMsg);
-        response.getWriter().write(xml);
-        response.getWriter().flush();
-    }
+//    public static void write(HttpServletResponse response, String returnCode, String returnMsg) throws IOException {
+//        String xml = of(returnCode, returnMsg);
+//        response.getWriter().write(xml);
+//        response.getWriter().flush();
+//    }
 
 }

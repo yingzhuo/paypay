@@ -8,11 +8,9 @@
 
  https://github.com/yingzhuo/paypay
 */
-package com.github.yingzhuo.paypay.wechat.configgroup;
+package com.github.yingzhuo.paypay.wechat;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author 应卓
@@ -20,8 +18,11 @@ import lombok.ToString;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class ConfigGroup {
+@Builder
+public class WechatpayConfig {
 
     private String appId;
     private String mchId;

@@ -8,6 +8,7 @@
     <artifactId>paypay</artifactId>
     <version>1.2.0</version>
     <modules>
+        <module>paypay-spring-boot-starter-common</module>
         <module>paypay-spring-boot-starter-alipay</module>
         <module>paypay-spring-boot-starter-wechatpay</module>
     </modules>
@@ -75,6 +76,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- paypay -->
+            <dependency>
+                <groupId>com.github.yingzhuo</groupId>
+                <artifactId>paypay-spring-boot-starter-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- springboot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -93,6 +101,16 @@
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${springboot.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.vaadin.external.google</groupId>
+                        <artifactId>android-json</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
