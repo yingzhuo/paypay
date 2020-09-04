@@ -10,9 +10,8 @@
 */
 package com.github.yingzhuo.paypay.ali.model;
 
+import com.github.yingzhuo.paypay.common.Prepayment;
 import lombok.*;
-
-import java.io.Serializable;
 
 /**
  * 预支付参数
@@ -26,7 +25,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlipayPrepayment implements Serializable {
+public class AlipayPrepayment implements Prepayment {
 
     /**
      * 交易编号

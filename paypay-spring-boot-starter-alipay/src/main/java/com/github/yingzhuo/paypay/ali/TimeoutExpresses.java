@@ -31,5 +31,6 @@ public final class TimeoutExpresses {
     public static final String PREDEFINED_7_D = "7d";
     public static final String PREDEFINED_15_D = "15d";
     public static final String PREDEFINED_1_C = "1c"; // 凌晨关闭 (不能过夜)
+    public static final String MAX = PREDEFINED_15_D;
 
 }

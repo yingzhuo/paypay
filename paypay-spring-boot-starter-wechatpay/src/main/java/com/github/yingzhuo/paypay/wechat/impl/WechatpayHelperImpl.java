@@ -19,7 +19,6 @@ import com.github.yingzhuo.paypay.wechat.model.WechatpayPrepayment;
 import com.github.yingzhuo.paypay.wechat.util.DocumentUtils;
 import com.github.yingzhuo.paypay.wechat.util.HttpUtils;
 import com.github.yingzhuo.paypay.wechat.util.SignUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -31,8 +30,9 @@ import java.util.Map;
  * @author 白宝鹏
  * @author 应卓
  */
-@Slf4j
 public class WechatpayHelperImpl implements WechatpayHelper {
+
+    private static final String URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
     private AmountTransformer transformer;
 
@@ -74,7 +74,7 @@ public class WechatpayHelperImpl implements WechatpayHelper {
         params.put("sign", sign);
         String wxReqStr = DocumentUtils.mapToXml(params);
 
-        String resultInfo = HttpUtils.postWithXmlBody("https://api.mch.weixin.qq.com/pay/unifiedorder", wxReqStr);
+        String resultInfo = HttpUtils.postWithXmlBody(URL, wxReqStr);
         Map<String, String> resultObject = DocumentUtils.xmlToMap(resultInfo);
 
         if (StringUtils.equalsIgnoreCase("SUCCESS", resultObject.get("return_code"))) {
@@ -103,7 +103,6 @@ public class WechatpayHelperImpl implements WechatpayHelper {
             }
         } else {
             String subMsg = resultObject.get("return_msg");
-            log.debug("{}", subMsg);
             throw new WechatpayPrepaymentParamsCreationException(null, subMsg);
         }
 
