@@ -10,17 +10,20 @@
 */
 package com.github.yingzhuo.paypay.wechat.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
+ * 预支付参数
+ *
  * @author 应卓
  * @author 白宝鹏
  */
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WechatpayPrepayment {
 
     /**

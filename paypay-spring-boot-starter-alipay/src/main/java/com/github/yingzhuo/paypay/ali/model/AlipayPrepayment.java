@@ -16,6 +16,9 @@ import java.io.Serializable;
 
 /**
  * 预支付参数
+ *
+ * @author 应卓
+ * @author 白宝鹏
  */
 @Getter
 @Setter
