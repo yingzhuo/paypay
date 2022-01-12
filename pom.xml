@@ -69,7 +69,7 @@
         <encoding>UTF-8</encoding>
         <java.version>1.8</java.version>
         <springboot.version>2.3.3.RELEASE</springboot.version>
-        <spring.version>5.2.8.RELEASE</spring.version>
+        <spring.version>5.3.14</spring.version>
         <jackson.version>2.11.2</jackson.version>
         <slf4j.version>1.7.30</slf4j.version>
     </properties>
